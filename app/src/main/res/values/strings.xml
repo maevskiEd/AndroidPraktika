@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">AndroidPraktika</string>
+    <string name="button1_name">меню</string>
+    <string name="button2_name">избранное</string>
+    <string name="button3_name">посмотреть позже</string>
+    <string name="button4_name">подборки</string>
+    <string name="button5_name">настройки</string>
+
 </resources>

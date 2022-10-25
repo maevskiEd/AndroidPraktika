@@ -29,10 +29,10 @@ class MainActivity : AppCompatActivity() {
         button3.setOnClickListener {
             Toast.makeText(this, "Посмотреть позже", Toast.LENGTH_SHORT).show()
         }
-        button1.setOnClickListener {
+        button4.setOnClickListener {
             Toast.makeText(this, "Подборки", Toast.LENGTH_SHORT).show()
         }
-        button1.setOnClickListener {
+        button5.setOnClickListener {
             Toast.makeText(this, "Настройка", Toast.LENGTH_SHORT).show()
         }
     }

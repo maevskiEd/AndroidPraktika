@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--    CardView-->
+    <dimen name="heightTopCardView">100dp</dimen>
+    <dimen name="marginTopCardView">10dp</dimen>
+    <dimen name="cornerRadiusTopCardView">15dp</dimen>
+    <dimen name="elevationTopCardView">10dp</dimen>
+    <!--    Posters-->
+    <dimen name="marginLeftPoster">1dp</dimen>
+    <dimen name="marginRightPoster">1dp</dimen>
+    <!--    Disclaimer-->
+    <dimen name="textSizeDisclaimer">16sp</dimen>
+</resources>

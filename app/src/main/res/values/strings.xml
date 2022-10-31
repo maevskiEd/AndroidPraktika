@@ -1,9 +1,12 @@
 <resources>
     <string name="app_name">AndroidPraktika</string>
-    <string name="button1_name">меню</string>
-    <string name="button2_name">избранное</string>
-    <string name="button3_name">посмотреть позже</string>
-    <string name="button4_name">подборки</string>
-    <string name="button5_name">настройки</string>
+    <string name="menu_settings_title">настройки</string>
+    <string name="menu_favorites_title">избранное</string>
+    <string name="menu_watch_later_title">посмотреть позже</string>
+    <string name="menu_selections_title">подборки</string>
+    <string name="page_title">поиск</string>
+    <string name="disclaimer">content is from deviantart.com</string>
+
+
 
 </resources>

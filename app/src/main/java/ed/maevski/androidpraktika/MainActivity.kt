@@ -2,38 +2,50 @@ package ed.maevski.androidpraktika
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
 import android.widget.Toast
+import ed.maevski.androidpraktika.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+//        val view = binding.root
+        setContentView(binding.root)
 
-        initButtons()
+        initMenu()
     }
 
-    private fun initButtons(){
-        val button1 = findViewById<Button>(R.id.button1)
-        val button2 = findViewById<Button>(R.id.button2)
-        val button3 = findViewById<Button>(R.id.button3)
-        val button4 = findViewById<Button>(R.id.button4)
-        val button5 = findViewById<Button>(R.id.button5)
+    private fun initMenu() {
+        binding.topAppBar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.settings -> {
+                    Toast.makeText(this, "Настройки", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                else -> false
+            }
+        }
 
-        button1.setOnClickListener {
-            Toast.makeText(this, "Меню", Toast.LENGTH_SHORT).show()
-        }
-        button2.setOnClickListener {
-            Toast.makeText(this, "Избранное", Toast.LENGTH_SHORT).show()
-        }
-        button3.setOnClickListener {
-            Toast.makeText(this, "Посмотреть позже", Toast.LENGTH_SHORT).show()
-        }
-        button4.setOnClickListener {
-            Toast.makeText(this, "Подборки", Toast.LENGTH_SHORT).show()
-        }
-        button5.setOnClickListener {
-            Toast.makeText(this, "Настройка", Toast.LENGTH_SHORT).show()
+
+        binding.bottomNavigation.setOnItemSelectedListener {
+
+            when (it.itemId) {
+                R.id.favorites -> {
+                    Toast.makeText(this, "Избранное", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.watch_later -> {
+                    Toast.makeText(this, "Посмотреть похже", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                R.id.selections -> {
+                    Toast.makeText(this, "Подборки", Toast.LENGTH_SHORT).show()
+                    true
+                }
+                else -> false
+            }
         }
     }
 }

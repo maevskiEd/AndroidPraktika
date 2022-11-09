@@ -88,7 +88,6 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-
     <TextView
         android:id="@+id/disclaimer"
         android:layout_width="wrap_content"
@@ -100,6 +99,81 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/top_container" />
+
+    <GridLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:columnCount="2"
+        android:orientation="horizontal"
+        android:useDefaultMargins="true"
+        android:layoutAnimation="@anim/poster_layout_animation"
+        app:layout_constraintTop_toBottomOf="@+id/disclaimer"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/img1"
+            android:clickable="true"
+            android:stateListAnimator="@animator/click_poster_animation"
+            android:layout_width="140dp"
+            android:layout_height="160dp"
+            app:cardCornerRadius="15dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/poster1"
+                android:scaleType="centerCrop"/>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/img2"
+            android:clickable="true"
+            android:stateListAnimator="@animator/click_poster_animation"
+            android:layout_width="140dp"
+            android:layout_height="160dp"
+            app:cardCornerRadius="15dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/poster2"
+                android:scaleType="centerCrop"/>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/img3"
+            android:clickable="true"
+            android:stateListAnimator="@animator/click_poster_animation"
+            android:layout_width="140dp"
+            android:layout_height="160dp"
+            app:cardCornerRadius="15dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/poster3"
+                android:scaleType="centerCrop"/>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/img4"
+            android:clickable="true"
+            android:stateListAnimator="@animator/click_poster_animation"
+            android:layout_width="140dp"
+            android:layout_height="160dp"
+            app:cardCornerRadius="15dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/poster4"
+                android:scaleType="centerCrop"/>
+        </androidx.cardview.widget.CardView>
+
+    </GridLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"

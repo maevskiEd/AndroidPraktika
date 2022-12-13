@@ -2,6 +2,7 @@ package ed.maevski.androidpraktika.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
 import ed.maevski.androidpraktika.data.Deviant_picture
@@ -30,5 +31,15 @@ class PictureDelegateAdapter :
         holder.title.text = item.title
         holder.author.text = item.author
         holder.description.text = item.description
+
+        //Обрабатываем нажатие на весь элемент целиком(можно сделать на отдельный элемент
+        //например, картинку) и вызываем метод нашего листенера, который мы получаем из
+        //конструктора адаптера
+        holder.picture.setOnClickListener{
+//            clickListener.click(items[position])
+        }
+/*            .item_container.setOnClickListener {
+                clickListener.click(items[position])
+            }*/
     }
 }

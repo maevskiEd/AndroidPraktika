@@ -1,5 +1,6 @@
 package ed.maevski.androidpraktika
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
@@ -19,7 +20,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val adapter = PictureRecyclerAdapter()
+        val adapter = PictureRecyclerAdapter(object : PictureRecyclerAdapter.OnItemClickListener{
+            override fun click(picture: Deviant_picture) {
+                //Запускаем наше активити
+                val intent = Intent(this@MainActivity, DetailsActivity::class.java)
+                startActivity(intent)
+            }
+        })
 
         fun getItems(): List<Item> {
             return listOf(

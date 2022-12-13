@@ -7,7 +7,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import ed.maevski.androidpraktika.adapter.PictureRecyclerAdapter
 import ed.maevski.androidpraktika.data.Ad
-import ed.maevski.androidpraktika.data.Deviant_picture
+import ed.maevski.androidpraktika.data.DeviantPicture
 import ed.maevski.androidpraktika.data.Item
 import ed.maevski.androidpraktika.databinding.ActivityMainBinding
 import ed.maevski.androidpraktika.decoration.TopSpacingItemDecoration
@@ -21,16 +21,25 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val adapter = PictureRecyclerAdapter(object : PictureRecyclerAdapter.OnItemClickListener{
-            override fun click(picture: Deviant_picture) {
+            override fun click(picture: DeviantPicture) {
+                Toast.makeText(this@MainActivity,picture.title,Toast.LENGTH_SHORT).show()
+                //Создаем бандл и кладем туда объект с данными фильма
+                val bundle = Bundle()
+                //Первым параметром указывается ключ, по которому потом будем искать, вторым сам
+                //передаваемый объект
+                bundle.putParcelable("dev", picture)
                 //Запускаем наше активити
                 val intent = Intent(this@MainActivity, DetailsActivity::class.java)
+                //Прикрепляем бандл к интенту
+                intent.putExtras(bundle)
+                //Запускаем активити через интент
                 startActivity(intent)
             }
         })
 
         fun getItems(): List<Item> {
             return listOf(
-                Deviant_picture(
+                DeviantPicture(
                     0,
                     "Casual Mulan",
                     "Zarory",
@@ -39,7 +48,7 @@ class MainActivity : AppCompatActivity() {
                     "https://www.deviantart.com/zarory/art/Casual-Mulan-762500114"
                 ),
                 Ad(1001, "!--AD--!", "Поддержите наших авторов на Patreon"),
-                Deviant_picture(
+                DeviantPicture(
                     1,
                     "Katara Sketch",
                     "Zarory",
@@ -47,7 +56,7 @@ class MainActivity : AppCompatActivity() {
                     "Had to draw my favorite Avatar character, Katara Slowly working my way through the gaang",
                     "https://www.deviantart.com/zarory/art/Katara-Sketch-935980566"
                 ),
-                Deviant_picture(
+                DeviantPicture(
                     2,
                     "Frozen Fever - Anna",
                     "imdrunkonTea",
@@ -55,7 +64,7 @@ class MainActivity : AppCompatActivity() {
                     "Welcoming Spring with some Frozen Fever fanart :) such a lovely short film. And the Snowgies are adorable! I want one XD",
                     "https://www.deviantart.com/imdrunkontea/art/Frozen-Fever-Anna-523899149"
                 ),
-                Deviant_picture(
+                DeviantPicture(
                     3,
                     "Anna",
                     "imdrunkonTea",
@@ -63,7 +72,7 @@ class MainActivity : AppCompatActivity() {
                     "Anna in her Frozen 2 garb!",
                     "https://www.deviantart.com/imdrunkontea/art/Anna-801277994"
                 ),
-                Deviant_picture(
+                DeviantPicture(
                     4,
                     "Spirit Blossom Ahri",
                     "imdrunkonTea",
@@ -71,7 +80,7 @@ class MainActivity : AppCompatActivity() {
                     "lil' doodle of Ahri's latest skin!",
                     "https://www.deviantart.com/imdrunkontea/art/Spirit-Blossom-Ahri-850236572"
                 ),
-                Deviant_picture(
+                DeviantPicture(
                     5,
                     "KDA - The Dancer",
                     "imdrunkonTea",
@@ -79,7 +88,7 @@ class MainActivity : AppCompatActivity() {
                     "Kai'sa's new KDA outfit is tres parfait",
                     "https://www.deviantart.com/imdrunkontea/art/KDA-The-Dancer-853644443"
                 ),
-                Deviant_picture(
+                DeviantPicture(
                     6,
                     "Commission : Crystal-Cat44",
                     "Sa-Dui",
@@ -87,7 +96,7 @@ class MainActivity : AppCompatActivity() {
                     "Commission for :iconcrystal-cat44: Thank you so much!! ",
                     "https://www.deviantart.com/sa-dui/art/Commission-Crystal-Cat44-932961567"
                 ),
-                Deviant_picture(
+                DeviantPicture(
                     7,
                     "Commission - Magician",
                     "NKSTUDIODIGITAL",
@@ -95,7 +104,7 @@ class MainActivity : AppCompatActivity() {
                     "- Project Name: Magician; - Project: Commission for client; - Director: NK; - Artist: ToothBrushNH",
                     "https://www.deviantart.com/nkstudiodigital/art/Commission-Magician-931227836"
                 ),
-                Deviant_picture(
+                DeviantPicture(
                     8,
                     "Triss Merigold",
                     "MilliganVick",
@@ -103,7 +112,7 @@ class MainActivity : AppCompatActivity() {
                     "CHARACTER  Triss Merigold - The Witcher 3; Torie as Triss",
                     "https://www.deviantart.com/milliganvick/art/Triss-Merigold-933869032"
                 ),
-                Deviant_picture(
+                DeviantPicture(
                     9,
                     "Yuna / Final Fantasy X - Summoner",
                     "ADSouto",

@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import ed.maevski.androidpraktika.data.DeviantPicture
 import ed.maevski.androidpraktika.databinding.ActivityDetailsBinding
-import ed.maevski.androidpraktika.databinding.ActivityMainBinding
 
 class DetailsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetailsBinding

@@ -62,17 +62,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initMenu() {
-        binding.topAppBar.setOnMenuItemClickListener {
-            when (it.itemId) {
-                R.id.settings -> {
-                    Toast.makeText(this, R.string.menu_settings_title, Toast.LENGTH_SHORT).show()
-                    true
-                }
-                else -> false
-            }
-        }
-
-
         binding.bottomNavigation.setOnItemSelectedListener {
 
             when (it.itemId) {

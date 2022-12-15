@@ -10,4 +10,25 @@
     <dimen name="marginRightPoster">1dp</dimen>
     <!--    Disclaimer-->
     <dimen name="textSizeDisclaimer">16sp</dimen>
+    <!--    RecyclerView-->
+    <dimen name="marginsRV">16dp</dimen>
+    <!--    AppBar_Details-->
+    <dimen name="heightAppBar">200dp</dimen>
+    <!--    CollapsingToolbar-->
+    <dimen name="minHeightCollapsingToolbar">60dp</dimen>
+    <!--    FAB-->
+    <dimen name="marginsFAB">16dp</dimen>
+    <!--    details_description-->
+    <dimen name="marginsDetaildesc">8dp</dimen>
+    <!--    itemAd-->
+    <dimen name="paddingsLayoutItemAd">15dp</dimen>
+    <dimen name="textSizeTitleItemAd">23sp</dimen>
+    <dimen name="textSizeContentItemAd">18sp</dimen>
+    <!--    itemPicture-->
+    <dimen name="heightLayoutItemPicture">150dp</dimen>
+    <dimen name="elevationLayoutItemPicture">5dp</dimen>
+    <dimen name="radiusLayoutItemPicture">10dp</dimen>
+    <dimen name="widthImageItemPicture">150dp</dimen>
+    <dimen name="paddingsTextItemPicture">8dp</dimen>
+
 </resources>

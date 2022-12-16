@@ -3,6 +3,7 @@ package ed.maevski.androidpraktika
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.ActionBar
 import ed.maevski.androidpraktika.data.DeviantPicture
 import ed.maevski.androidpraktika.databinding.ActivityMainBinding
 

@@ -1,5 +1,6 @@
 package ed.maevski.androidpraktika
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,8 @@ import ed.maevski.androidpraktika.data.DeviantPicture
 import ed.maevski.androidpraktika.databinding.FragmentDetailsBinding
 
 class DetailsFragment : Fragment() {
+    lateinit var picture: DeviantPicture
+
     private var _binding: FragmentDetailsBinding? = null
     private val binding get() = _binding!!
 
@@ -22,14 +25,47 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val pic = arguments?.get("dev") as DeviantPicture
+
+        picture = arguments?.get("dev") as DeviantPicture
+
+        //Устанавливаем сердечко
+        binding.detailsFabFavorites.setImageResource(
+            if (picture.isInFavorites) R.drawable.ic_baseline_favorite_24
+            else R.drawable.ic_baseline_favorite_border_24
+        )
 
         //Устанавливаем заголовок
-        binding.detailsToolbar.title = pic.title
+        binding.detailsToolbar.title = picture.title
         //Устанавливаем картинку
-        binding.detailsPoster.setImageResource(pic.picture)
+        binding.detailsPoster.setImageResource(picture.picture)
         //Устанавливаем описание
-        binding.detailsDescription.text = pic.description
+        binding.detailsDescription.text = picture.description
+
+        binding.detailsFabFavorites.setOnClickListener {
+            if (!picture.isInFavorites) {
+                binding.detailsFabFavorites.setImageResource(R.drawable.ic_baseline_favorite_24)
+                picture.isInFavorites = true
+            } else {
+                binding.detailsFabFavorites.setImageResource(R.drawable.ic_baseline_favorite_border_24)
+                picture.isInFavorites = false
+            }
+        }
+
+        binding.detailsFabShare.setOnClickListener {
+            //Создаем интент
+            val intent = Intent()
+            //Указываем action с которым он запускается
+            intent.action = Intent.ACTION_SEND
+            //Кладем данные о нашем фильме
+            intent.putExtra(
+                Intent.EXTRA_TEXT,
+                "Check out this film: ${picture.title} \n\n ${picture.author}\n\n ${picture.description}"
+            )
+            //Указываем MIME тип, чтобы система знала, какое приложения предложить
+            intent.type = "text/plain"
+            //Запускаем наше активити
+            startActivity(Intent.createChooser(intent, "Share To:"))
+        }
     }
 
     override fun onDestroyView() {

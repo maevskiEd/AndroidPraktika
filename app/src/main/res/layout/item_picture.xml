@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView
-    android:id="@+id/item_container"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item_container"
     android:layout_width="match_parent"
     android:layout_height="@dimen/heightLayoutItemPicture"
     android:elevation="@dimen/elevationLayoutItemPicture"
@@ -22,15 +21,23 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/avatars" />
 
+<!--        <ImageView
+            android:id="@+id/favorite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@drawable/ic_round_favorite_border"
+            app:layout_constraintEnd_toEndOf="@+id/poster"
+            app:layout_constraintBottom_toBottomOf="@+id/poster"/>-->
+
         <TextView
             android:id="@+id/title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
             android:padding="@dimen/paddingsTextItemPicture"
+            android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline"
-            app:layout_constraintStart_toEndOf="@+id/poster"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/poster"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Title" />
 
@@ -38,10 +45,10 @@
             android:id="@+id/author"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textAlignment="center"
             android:padding="@dimen/paddingsTextItemPicture"
-            app:layout_constraintStart_toEndOf="@+id/poster"
+            android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/poster"
             app:layout_constraintTop_toBottomOf="@id/title"
             tools:text="Author" />
 
@@ -51,8 +58,8 @@
             android:layout_height="0dp"
             android:padding="@dimen/paddingsTextItemPicture"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/poster"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/poster"
             app:layout_constraintTop_toBottomOf="@+id/author"
             tools:text="@tools:sample/lorem/random" />
 

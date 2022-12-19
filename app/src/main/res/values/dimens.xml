@@ -20,6 +20,8 @@
     <dimen name="marginsFAB">16dp</dimen>
     <!--    details_description-->
     <dimen name="marginsDetaildesc">8dp</dimen>
+    <!--    search-->
+    <dimen name="marginsSearch">8dp</dimen>
     <!--    itemAd-->
     <dimen name="paddingsLayoutItemAd">15dp</dimen>
     <dimen name="textSizeTitleItemAd">23sp</dimen>

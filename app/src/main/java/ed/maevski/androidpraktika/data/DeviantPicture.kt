@@ -11,6 +11,6 @@ data class DeviantPicture(
     val picture: Int,
     val description: String,
     val http: String,
-    var isInFavorites: Boolean = false
+    override var isInFavorites: Boolean = false
 ) : Item, Parcelable
 

@@ -15,6 +15,7 @@ class PictureDelegateAdapter(private val clickListener: PictureRecyclerAdapter.O
         val title = binding.title
         val author = binding.author
         val description = binding.description
+        val item_container = binding.itemContainer
     }
 
     override fun isForViewType(item: Item, items: MutableList<Item>, position: Int): Boolean {
@@ -31,10 +32,7 @@ class PictureDelegateAdapter(private val clickListener: PictureRecyclerAdapter.O
         holder.author.text = item.author
         holder.description.text = item.description
 
-        //Обрабатываем нажатие на весь элемент целиком - Уточнить????  (можно сделать на отдельный элемент
-        //например, картинку) и вызываем метод нашего листенера, который мы получаем из
-        //конструктора адаптера
-        holder.picture.setOnClickListener{
+        holder.item_container.setOnClickListener{
             clickListener.click(item)
         }
     }

@@ -3,6 +3,7 @@ package ed.maevski.androidpraktika.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
 import ed.maevski.androidpraktika.data.DeviantPicture
 import ed.maevski.androidpraktika.data.Item
@@ -27,7 +28,17 @@ class PictureDelegateAdapter(private val clickListener: PictureRecyclerAdapter.O
     }
 
     override fun onBindViewHolder(item: DeviantPicture, holder: ViewHolder, payloads: MutableList<Any>) {
-        holder.picture.setImageResource(item.picture)
+//        holder.picture.setImageResource(item.picture)
+
+        //Указываем контейнер, в котором будет "жить" наша картинка
+        Glide.with(holder.item_container)
+            //Загружаем сам ресурс
+            .load(item.picture)
+            //Центруем изображение
+            .centerCrop()
+            //Указываем ImageView, куда будем загружать изображение
+            .into(holder.picture)
+
         holder.title.text = item.title
         holder.author.text = item.author
         holder.description.text = item.description

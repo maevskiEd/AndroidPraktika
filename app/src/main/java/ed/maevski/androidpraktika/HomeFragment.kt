@@ -1,6 +1,11 @@
 package ed.maevski.androidpraktika
 
 import android.os.Bundle
+import android.transition.Scene
+import android.transition.Slide
+import android.transition.TransitionManager
+import android.transition.TransitionSet
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -13,12 +18,15 @@ import ed.maevski.androidpraktika.data.Ad
 import ed.maevski.androidpraktika.data.DeviantPicture
 import ed.maevski.androidpraktika.data.Item
 import ed.maevski.androidpraktika.databinding.FragmentHomeBinding
+import ed.maevski.androidpraktika.databinding.MergeHomeScreenContentBinding
 import ed.maevski.androidpraktika.decoration.TopSpacingItemDecoration
 import java.util.*
 
 class HomeFragment(val items: List<Item>) : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
+
+    private lateinit var bindingScene: MergeHomeScreenContentBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -29,7 +37,25 @@ class HomeFragment(val items: List<Item>) : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+
         super.onViewCreated(view, savedInstanceState)
+
+        bindingScene = MergeHomeScreenContentBinding.inflate(layoutInflater, binding.homeFragmentRoot, false)
+        val scene = Scene(binding.homeFragmentRoot, bindingScene.root)
+
+        val searchSlide = Slide(Gravity.TOP).addTarget(R.id.search_view)
+        //Создаем анимацию выезда RV снизу
+        val recyclerSlide = Slide(Gravity.BOTTOM).addTarget(R.id.main_recycler)
+        //Создаем экземпляр TransitionSet, который объединит все наши анимации
+        val customTransition = TransitionSet().apply {
+            //Устанавливаем время, за которое будет проходить анимация
+            duration = 500
+            //Добавляем сами анимации
+            addTransition(recyclerSlide)
+            addTransition(searchSlide)
+        }
+        //Также запускаем через TransitionManager, но вторым параметром передаем нашу кастомную анимацию
+        TransitionManager.go(scene, customTransition)
 
         val adapter = PictureRecyclerAdapter(object : PictureRecyclerAdapter.OnItemClickListener {
             override fun click(picture: DeviantPicture) {
@@ -39,17 +65,17 @@ class HomeFragment(val items: List<Item>) : Fragment() {
         })
 
         adapter.items = items
-        binding.mainRecycler.layoutManager = LinearLayoutManager(requireContext())
+        bindingScene.mainRecycler.layoutManager = LinearLayoutManager(requireContext())
         val decorator = TopSpacingItemDecoration(8)
-        binding.mainRecycler.addItemDecoration(decorator)
-        binding.mainRecycler.adapter = adapter
+        bindingScene.mainRecycler.addItemDecoration(decorator)
+        bindingScene.mainRecycler.adapter = adapter
 
-        binding.searchView.setOnClickListener {
-            binding.searchView.isIconified = false
+        bindingScene.searchView.setOnClickListener {
+            bindingScene.searchView.isIconified = false
         }
 
         //Подключаем слушателя изменений введенного текста в поиска
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+        bindingScene.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
             //Этот метод отрабатывает при нажатии кнопки "поиск" на софт клавиатуре
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
@@ -60,7 +86,7 @@ class HomeFragment(val items: List<Item>) : Fragment() {
                 //Если ввод пуст то вставляем в адаптер всю БД
                 if (newText.isEmpty()) {
                     adapter.items = items
-                    binding.mainRecycler.adapter = adapter
+                    bindingScene.mainRecycler.adapter = adapter
                     return true
                 }
                 //Фильтруем список на поиск подходящих сочетаний
@@ -70,7 +96,7 @@ class HomeFragment(val items: List<Item>) : Fragment() {
                 }
                 //Добавляем в адаптер
                 adapter.items = result
-                binding.mainRecycler.adapter = adapter
+                bindingScene.mainRecycler.adapter = adapter
                 return true
             }
         })

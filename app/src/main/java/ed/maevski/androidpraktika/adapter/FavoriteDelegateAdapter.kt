@@ -6,11 +6,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
 import ed.maevski.androidpraktika.data.DeviantPicture
 import ed.maevski.androidpraktika.data.Item
-import ed.maevski.androidpraktika.databinding.FavoritePictureBinding
+import ed.maevski.androidpraktika.databinding.ItemFavoritePictureBinding
 
 class FavoriteDelegateAdapter() :
     AbsListItemAdapterDelegate<DeviantPicture, Item, FavoriteDelegateAdapter.ViewHolder>() {
-    class ViewHolder(binding: FavoritePictureBinding) : RecyclerView.ViewHolder(binding.root) {
+    class ViewHolder(binding: ItemFavoritePictureBinding) : RecyclerView.ViewHolder(binding.root) {
         val pic = binding.pic
     }
 
@@ -19,7 +19,7 @@ class FavoriteDelegateAdapter() :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup): ViewHolder {
-        return ViewHolder(FavoritePictureBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return ViewHolder(ItemFavoritePictureBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(item: DeviantPicture, holder: ViewHolder, payloads: MutableList<Any>) {

@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.annotation.IntegerRes
 import ed.maevski.androidpraktika.adapter.FavoriteRecyclerAfapter
 import ed.maevski.androidpraktika.adapter.PictureRecyclerAdapter
 import ed.maevski.androidpraktika.data.DeviantPicture
@@ -16,6 +18,7 @@ import ed.maevski.androidpraktika.decoration.TopSpacingItemDecoration
 class FavoritesFragment(val devPictures: List<Item>) : Fragment() {
     private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
+    private val favPadding = 8
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -33,9 +36,19 @@ class FavoritesFragment(val devPictures: List<Item>) : Fragment() {
         val adapter = FavoriteRecyclerAfapter()
 
         adapter.items = favPictures
-        val decorator = TopSpacingItemDecoration(8)
+        val decorator = TopSpacingItemDecoration(favPadding )
         binding.favoritesRecycler.addItemDecoration(decorator)
         binding.favoritesRecycler.adapter = adapter
+
+        AnimationHelper.performFragmentCircularRevealAnimation(binding.favoritesFragmentRoot, requireActivity(), 1)
+
+        requireActivity().onBackPressedDispatcher.addCallback(
+            viewLifecycleOwner,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {}
+            }
+        )
+
     }
 
     override fun onDestroyView() {

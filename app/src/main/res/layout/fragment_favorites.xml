@@ -5,9 +5,9 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/favorites_fragment_root"
+    android:background="@drawable/background_favorites"
     android:visibility="invisible"
     tools:visibility="visible"
-    android:background="@drawable/background_favorites"
     tools:context=".FavoritesFragment">
 
     <androidx.recyclerview.widget.RecyclerView
@@ -19,3 +19,4 @@
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"/>
 
 </FrameLayout>
+

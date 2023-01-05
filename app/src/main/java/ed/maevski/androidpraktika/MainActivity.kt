@@ -2,14 +2,12 @@ package ed.maevski.androidpraktika
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import ed.maevski.androidpraktika.data.Ad
 import ed.maevski.androidpraktika.data.DeviantPicture
 import ed.maevski.androidpraktika.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
-    private var backPressed = 0L
     private lateinit var binding: ActivityMainBinding
 
     private val itemsRV = listOf(
@@ -109,25 +107,6 @@ class MainActivity : AppCompatActivity() {
             .commit()
 
         initMenu()
-    }
-
-    override fun onBackPressed() {
-        if (supportFragmentManager.backStackEntryCount == 1) {
-            if (backPressed + TIME_INTERVAL > System.currentTimeMillis()) {
-                super.onBackPressed()
-                finish()
-            } else {
-                Toast.makeText(this, R.string.textToExit, Toast.LENGTH_SHORT).show()
-            }
-
-            backPressed = System.currentTimeMillis()
-        } else {
-            super.onBackPressed()
-        }
-    }
-
-    companion object {
-        const val TIME_INTERVAL = 2000
     }
 
     //Ищем фрагмент по тегу, если он есть то возвращаем его, если нет, то null

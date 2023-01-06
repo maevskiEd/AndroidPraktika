@@ -9,7 +9,7 @@ class PictureRecyclerAdapter(private val clickListener: OnItemClickListener) : L
     init {
         delegatesManager.addDelegate(PictureDelegateAdapter(clickListener))
         delegatesManager.addDelegate(AdDelegateAdapter())
-        delegatesManager.addDelegate(FavoriteDelegateAdapter())
+//        delegatesManager.addDelegate(FavoriteDelegateAdapter())
     }
 
     override fun setItems(items: List<Item>?) {

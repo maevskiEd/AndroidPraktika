@@ -22,6 +22,9 @@
     <dimen name="marginsDetaildesc">8dp</dimen>
     <!--    search-->
     <dimen name="marginsSearch">8dp</dimen>
+    <!--    favorites-->
+    <integer name="marginsFavorites">12</integer>
+    <dimen name="marginsFavorites">8</dimen>
     <!--    itemAd-->
     <dimen name="paddingsLayoutItemAd">15dp</dimen>
     <dimen name="textSizeTitleItemAd">23sp</dimen>
@@ -32,5 +35,8 @@
     <dimen name="radiusLayoutItemPicture">10dp</dimen>
     <dimen name="widthImageItemPicture">150dp</dimen>
     <dimen name="paddingsTextItemPicture">8dp</dimen>
+    <!--    SplashScreen-->
+    <dimen name="textSizeSplashScreen">32sp</dimen>
+    <dimen name="marginsSplashScreen">32dp</dimen>
 
 </resources>

@@ -17,6 +17,7 @@ class PictureDelegateAdapter(private val clickListener: PictureRecyclerAdapter.O
         val author = binding.author
         val description = binding.description
         val item_container = binding.itemContainer
+        val donut_view = binding.donutView
     }
 
     override fun isForViewType(item: Item, items: MutableList<Item>, position: Int): Boolean {
@@ -42,6 +43,7 @@ class PictureDelegateAdapter(private val clickListener: PictureRecyclerAdapter.O
         holder.title.text = item.title
         holder.author.text = item.author
         holder.description.text = item.description
+        holder.donut_view.setProgress(item.countViews)
 
         holder.item_container.setOnClickListener{
             clickListener.click(item)

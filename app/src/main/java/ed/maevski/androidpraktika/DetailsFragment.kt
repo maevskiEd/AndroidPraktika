@@ -59,7 +59,7 @@ class DetailsFragment : Fragment() {
             //Кладем данные о нашем фильме
             intent.putExtra(
                 Intent.EXTRA_TEXT,
-                "Check out this film: ${picture.title} \n\n ${picture.author}\n\n ${picture.description}"
+                "Check out this picture: ${picture.title} \n\n ${picture.author}\n\n ${picture.description}"
             )
             //Указываем MIME тип, чтобы система знала, какое приложения предложить
             intent.type = "text/plain"

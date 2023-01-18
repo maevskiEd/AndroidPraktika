@@ -21,13 +21,15 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/avatars" />
 
-<!--        <ImageView
-            android:id="@+id/favorite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_round_favorite_border"
-            app:layout_constraintEnd_toEndOf="@+id/poster"
-            app:layout_constraintBottom_toBottomOf="@+id/poster"/>-->
+        <ed.maevski.androidpraktika.DonutView
+            android:id="@+id/donut_view"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:translationZ="11dp"
+            app:stroke="10"
+            app:progress="517000"
+            app:layout_constraintStart_toStartOf="@+id/poster"
+            app:layout_constraintBottom_toBottomOf="@+id/poster"/>
 
         <TextView
             android:id="@+id/title"

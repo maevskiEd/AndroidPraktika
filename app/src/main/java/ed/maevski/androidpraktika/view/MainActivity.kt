@@ -3,20 +3,13 @@ package ed.maevski.androidpraktika.view
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import ed.maevski.androidpraktika.R
-import ed.maevski.androidpraktika.domain.Ad
 import ed.maevski.androidpraktika.domain.DeviantPicture
 import ed.maevski.androidpraktika.databinding.ActivityMainBinding
 import ed.maevski.androidpraktika.view.fragments.*
-import ed.maevski.androidpraktika.viewmodel.MainActivityViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-
-    private val viewModel by lazy {
-        ViewModelProvider.NewInstanceFactory().create(MainActivityViewModel::class.java)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +19,7 @@ class MainActivity : AppCompatActivity() {
 
         supportFragmentManager
             .beginTransaction()
-            .add(R.id.fragment_placeholder, HomeFragment(itemsRV))
+            .add(R.id.fragment_placeholder, HomeFragment())
             .addToBackStack(null)
             .commit()
 
@@ -72,13 +65,13 @@ class MainActivity : AppCompatActivity() {
                     val fragment = checkFragmentExistence(tag)
                     //В первом параметре, если фрагмент не найден и метод вернул null, то с помощью
                     //элвиса мы вызываем создание нового фрагмента
-                    changeFragment(fragment ?: HomeFragment(itemsRV), tag)
+                    changeFragment(fragment ?: HomeFragment(), tag)
                     true
                 }
                 R.id.favorites -> {
                     val tag = "favorites"
                     val fragment = checkFragmentExistence(tag)
-                    changeFragment(fragment ?: FavoritesFragment(itemsRV), tag)
+                    changeFragment(fragment ?: FavoritesFragment(), tag)
                     true
                 }
                 R.id.watch_later -> {

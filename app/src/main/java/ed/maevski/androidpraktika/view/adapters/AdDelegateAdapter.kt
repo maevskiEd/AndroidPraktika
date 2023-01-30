@@ -1,11 +1,11 @@
-package ed.maevski.androidpraktika.adapter
+package ed.maevski.androidpraktika.view.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
-import ed.maevski.androidpraktika.data.Ad
-import ed.maevski.androidpraktika.data.Item
+import ed.maevski.androidpraktika.domain.Ad
+import ed.maevski.androidpraktika.domain.Item
 import ed.maevski.androidpraktika.databinding.ItemAdBinding
 
 class AdDelegateAdapter : AbsListItemAdapterDelegate<Ad, Item, AdDelegateAdapter.ViewHolder>() {

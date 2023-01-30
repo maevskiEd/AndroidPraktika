@@ -1,4 +1,4 @@
-package ed.maevski.androidpraktika.decoration
+package ed.maevski.androidpraktika.view.decoration
 
 import android.content.res.Resources
 import android.graphics.Rect

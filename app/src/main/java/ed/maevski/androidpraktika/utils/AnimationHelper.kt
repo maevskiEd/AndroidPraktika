@@ -1,4 +1,4 @@
-package ed.maevski.androidpraktika
+package ed.maevski.androidpraktika.utils
 
 import android.app.Activity
 import android.view.View

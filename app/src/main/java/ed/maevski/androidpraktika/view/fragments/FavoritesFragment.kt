@@ -1,19 +1,16 @@
-package ed.maevski.androidpraktika
+package ed.maevski.androidpraktika.view.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import androidx.annotation.IntegerRes
-import ed.maevski.androidpraktika.adapter.FavoriteRecyclerAfapter
-import ed.maevski.androidpraktika.adapter.PictureRecyclerAdapter
-import ed.maevski.androidpraktika.data.DeviantPicture
-import ed.maevski.androidpraktika.data.Item
+import ed.maevski.androidpraktika.view.rv_adapters.FavoriteRecyclerAdapter
+import ed.maevski.androidpraktika.domain.Item
 import ed.maevski.androidpraktika.databinding.FragmentFavoritesBinding
-import ed.maevski.androidpraktika.decoration.TopSpacingItemDecoration
+import ed.maevski.androidpraktika.view.decoration.TopSpacingItemDecoration
+import ed.maevski.androidpraktika.utils.AnimationHelper
 
 class FavoritesFragment(val devPictures: List<Item>) : Fragment() {
     private var _binding: FragmentFavoritesBinding? = null
@@ -33,7 +30,7 @@ class FavoritesFragment(val devPictures: List<Item>) : Fragment() {
         //Получаем список при транзакции фрагмента
         val favPictures: List<Item> = devPictures.filter { it.isInFavorites }
 
-        val adapter = FavoriteRecyclerAfapter()
+        val adapter = FavoriteRecyclerAdapter()
 
         adapter.items = favPictures
         val decorator = TopSpacingItemDecoration(favPadding )

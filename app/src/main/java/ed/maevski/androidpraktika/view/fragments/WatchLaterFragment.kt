@@ -1,34 +1,30 @@
-package ed.maevski.androidpraktika
+package ed.maevski.androidpraktika.view.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
-import ed.maevski.androidpraktika.databinding.FragmentSelectionsBinding
+import ed.maevski.androidpraktika.databinding.FragmentWatchLaterBinding
+import ed.maevski.androidpraktika.utils.AnimationHelper
 
-class SelectionsFragment : Fragment() {
-    private var _binding: FragmentSelectionsBinding? = null
+class WatchLaterFragment : Fragment() {
+    private var _binding: FragmentWatchLaterBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentSelectionsBinding.inflate(inflater, container, false)
+        _binding = FragmentWatchLaterBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        AnimationHelper.performFragmentCircularRevealAnimation(
-            binding.selectionsFragmentRoot,
-            requireActivity(),
-            1
-        )
+        AnimationHelper.performFragmentCircularRevealAnimation(binding.watchLaterFragmentRoot, requireActivity(), 1)
 
         requireActivity().onBackPressedDispatcher.addCallback(
             viewLifecycleOwner,
@@ -40,7 +36,7 @@ class SelectionsFragment : Fragment() {
 
     override fun onDestroyView() {
         _binding = null
-
         super.onDestroyView()
     }
 }
+

@@ -1,4 +1,4 @@
-package ed.maevski.androidpraktika
+package ed.maevski.androidpraktika.view.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -9,12 +9,13 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
-import ed.maevski.androidpraktika.adapter.PictureRecyclerAdapter
-import ed.maevski.androidpraktika.data.Ad
-import ed.maevski.androidpraktika.data.DeviantPicture
-import ed.maevski.androidpraktika.data.Item
+import ed.maevski.androidpraktika.view.MainActivity
+import ed.maevski.androidpraktika.view.rv_adapters.PictureRecyclerAdapter
+import ed.maevski.androidpraktika.domain.DeviantPicture
+import ed.maevski.androidpraktika.domain.Item
 import ed.maevski.androidpraktika.databinding.FragmentHomeBinding
-import ed.maevski.androidpraktika.decoration.TopSpacingItemDecoration
+import ed.maevski.androidpraktika.view.decoration.TopSpacingItemDecoration
+import ed.maevski.androidpraktika.utils.AnimationHelper
 import java.util.*
 
 class HomeFragment(val items: List<Item>) : Fragment() {
@@ -67,7 +68,7 @@ class HomeFragment(val items: List<Item>) : Fragment() {
             }
             //Этот метод отрабатывает на каждое изменения текста
             override fun onQueryTextChange(newText: String): Boolean {
-                val deviantPictures: List<DeviantPicture> = items.filter { it is DeviantPicture} as List<DeviantPicture>
+                val deviantPictures: List<DeviantPicture> = items.filter { it is DeviantPicture } as List<DeviantPicture>
                 //Если ввод пуст то вставляем в адаптер всю БД
                 if (newText.isEmpty()) {
                     adapter.items = items

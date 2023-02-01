@@ -25,11 +25,17 @@ class HomeFragment() : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
+    private val positionOne = 1
+
     private lateinit var adapter: PictureRecyclerAdapter
 
-    private val viewModel by lazy {
-        ViewModelProvider.NewInstanceFactory().create(HomeFragmentViewModel::class.java)
+    private val viewModel: HomeFragmentViewModel by lazy {
+        ViewModelProvider(this)[HomeFragmentViewModel::class.java]
     }
+
+/*    private val viewModel by lazy {
+        ViewModelProvider.NewInstanceFactory().create(HomeFragmentViewModel::class.java)
+    }*/
 
     private var items = listOf<Item>()
         //Используем backing field
@@ -54,9 +60,13 @@ class HomeFragment() : Fragment() {
 
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.picturesListLiveData.observe(viewLifecycleOwner, Observer<List<Item>> {
+        viewModel.picturesListLiveData.observe(viewLifecycleOwner) {
             items = it
-        })
+        }
+
+/*        viewModel.picturesListLiveData.observe(viewLifecycleOwner, Observer<List<Item>> {
+            items = it
+        })*/
 
         adapter = PictureRecyclerAdapter(object : PictureRecyclerAdapter.OnItemClickListener {
             override fun click(picture: DeviantPicture) {
@@ -74,7 +84,7 @@ class HomeFragment() : Fragment() {
         AnimationHelper.performFragmentCircularRevealAnimation(
             binding.homeFragmentRoot,
             requireActivity(),
-            1
+            positionOne
         )
 
         requireActivity().onBackPressedDispatcher.addCallback(

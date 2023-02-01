@@ -21,9 +21,13 @@ class FavoritesFragment() : Fragment() {
     private val favPadding = 8
     private lateinit var adapter: FavoriteRecyclerAdapter
 
-    private val viewModel by lazy {
-        ViewModelProvider.NewInstanceFactory().create(FavoritesFragmentViewModel::class.java)
+    private val viewModel: FavoritesFragmentViewModel by lazy {
+        ViewModelProvider(this).get(FavoritesFragmentViewModel::class.java)
     }
+
+/*    private val viewModel by lazy {
+        ViewModelProvider.NewInstanceFactory().create(FavoritesFragmentViewModel::class.java)
+    }*/
 
     private var devPictures = listOf<Item>()
         //Используем backing field
@@ -47,9 +51,9 @@ class FavoritesFragment() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.picturesListLiveData.observe(viewLifecycleOwner, Observer<List<Item>> {
+        viewModel.picturesListLiveData.observe(viewLifecycleOwner) {
             devPictures  = it
-        })
+        }
 
         //Получаем список при транзакции фрагмента
         adapter = FavoriteRecyclerAdapter()

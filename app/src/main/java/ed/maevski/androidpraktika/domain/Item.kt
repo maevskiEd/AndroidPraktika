@@ -1,4 +1,4 @@
-package ed.maevski.androidpraktika.data
+package ed.maevski.androidpraktika.domain
 
 
 interface Item {

@@ -11,7 +11,8 @@ import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import ed.maevski.androidpraktika.adapter.PictureDelegateAdapter
+import ed.maevski.androidpraktika.view.adapters.PictureDelegateAdapter
+import ed.maevski.androidpraktika.view.MainActivity
 import org.hamcrest.Matcher
 import org.hamcrest.Matchers.allOf
 import org.junit.Rule

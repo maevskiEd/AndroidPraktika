@@ -1,15 +1,16 @@
-package ed.maevski.androidpraktika.adapter
+package ed.maevski.androidpraktika.view.rv_adapters
 
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
-import ed.maevski.androidpraktika.data.DeviantPicture
-import ed.maevski.androidpraktika.data.Item
+import ed.maevski.androidpraktika.domain.DeviantPicture
+import ed.maevski.androidpraktika.domain.Item
+import ed.maevski.androidpraktika.view.adapters.AdDelegateAdapter
+import ed.maevski.androidpraktika.view.adapters.PictureDelegateAdapter
 
 class PictureRecyclerAdapter(private val clickListener: OnItemClickListener) : ListDelegationAdapter<List<Item>>() {
 
     init {
         delegatesManager.addDelegate(PictureDelegateAdapter(clickListener))
         delegatesManager.addDelegate(AdDelegateAdapter())
-//        delegatesManager.addDelegate(FavoriteDelegateAdapter())
     }
 
     override fun setItems(items: List<Item>?) {

@@ -21,7 +21,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/avatars" />
 
-        <ed.maevski.androidpraktika.DonutView
+        <ed.maevski.androidpraktika.view.customviews.DonutView
             android:id="@+id/donut_view"
             android:layout_width="50dp"
             android:layout_height="50dp"

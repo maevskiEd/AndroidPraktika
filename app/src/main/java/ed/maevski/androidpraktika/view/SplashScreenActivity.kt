@@ -1,9 +1,8 @@
-package ed.maevski.androidpraktika
+package ed.maevski.androidpraktika.view
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.airbnb.lottie.LottieAnimationView
 import ed.maevski.androidpraktika.databinding.ActivitySplashScreenBinding
 
 class SplashScreenActivity : AppCompatActivity() {

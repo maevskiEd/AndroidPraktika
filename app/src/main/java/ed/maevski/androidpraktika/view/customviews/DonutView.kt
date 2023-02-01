@@ -1,9 +1,10 @@
-package ed.maevski.androidpraktika
+package ed.maevski.androidpraktika.view.customviews
 
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import ed.maevski.androidpraktika.R
 
 class DonutView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null) :
     View(context, attributeSet) {

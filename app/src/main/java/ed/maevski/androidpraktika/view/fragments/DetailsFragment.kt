@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import ed.maevski.androidpraktika.R
 import ed.maevski.androidpraktika.domain.DeviantPicture
 import ed.maevski.androidpraktika.databinding.FragmentDetailsBinding
@@ -38,7 +39,11 @@ class DetailsFragment : Fragment() {
         //Устанавливаем заголовок
         binding.detailsToolbar.title = picture.title
         //Устанавливаем картинку
-        binding.detailsPoster.setImageResource(picture.picture)
+        Glide.with(this)
+            .load(picture.url)
+            .centerCrop()
+            .into(binding.detailsPoster)
+
         //Устанавливаем описание
         binding.detailsDescription.text = picture.description
 

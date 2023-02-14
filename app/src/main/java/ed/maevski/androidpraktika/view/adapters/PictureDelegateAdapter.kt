@@ -35,7 +35,7 @@ class PictureDelegateAdapter(private val clickListener: PictureRecyclerAdapter.O
         //Указываем контейнер, в котором будет "жить" наша картинка
         Glide.with(holder.item_container)
             //Загружаем сам ресурс
-            .load(item.picture)
+            .load(item.urlThumb150)
             //Центруем изображение
             .centerCrop()
             //Указываем ImageView, куда будем загружать изображение

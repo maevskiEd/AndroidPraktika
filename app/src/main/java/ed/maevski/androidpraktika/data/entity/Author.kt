@@ -1,8 +1,10 @@
 package ed.maevski.androidpraktika.data.entity
 
+import com.google.gson.annotations.SerializedName
+
 data class Author(
-    val type: String,
-    val usericon: String,
-    val userid: String,
-    val username: String
+    @SerializedName("type") val type: String,
+    @SerializedName("usericon") val usericon: String,
+    @SerializedName("userid") val userid: String,
+    @SerializedName("username") val username: String
 )

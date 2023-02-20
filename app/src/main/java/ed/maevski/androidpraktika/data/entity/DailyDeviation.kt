@@ -1,8 +1,10 @@
 package ed.maevski.androidpraktika.data.entity
 
+import com.google.gson.annotations.SerializedName
+
 data class DailyDeviation(
-    val body: String,
-    val giver: Giver,
-    val suggester: Suggester,
-    val time: String
+    @SerializedName("body") val body: String,
+    @SerializedName("giver") val giver: Giver,
+    @SerializedName("suggester") val suggester: Suggester,
+    @SerializedName("time") val time: String
 )

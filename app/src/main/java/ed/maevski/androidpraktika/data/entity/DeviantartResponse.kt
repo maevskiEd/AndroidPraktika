@@ -1,6 +1,8 @@
 package ed.maevski.androidpraktika.data.entity
 
+import com.google.gson.annotations.SerializedName
+
 data class DeviantartResponse(
-    val has_more: Boolean,
-    val results: List<Results>
+    @SerializedName("has_more") val has_more: Boolean,
+    @SerializedName("results") val results: List<Results>
 )

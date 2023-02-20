@@ -7,12 +7,24 @@ import ed.maevski.androidpraktika.domain.Interactor
 import ed.maevski.androidpraktika.domain.Item
 
 class HomeFragmentViewModel: ViewModel() {
-    val picturesListLiveData = MutableLiveData<List<Item>>()
+//    val picturesListLiveData = MutableLiveData<List<Item>>()
+    val picturesListLiveData:  MutableLiveData<List<Item>> = MutableLiveData()
 
     private var interactor: Interactor = App.instance.interactor
 
     init {
-        val films = interactor.getPicturesDB()
-        picturesListLiveData.postValue(films)
+        interactor.getFilmsFromApi(1, object : ApiCallback {
+            override fun onSuccess(pictures: List<Item>) {
+                picturesListLiveData.postValue(pictures)
+            }
+
+            override fun onFailure() {
+            }
+        })
+    }
+
+    interface ApiCallback {
+        fun onSuccess(pictures: List<Item>)
+        fun onFailure()
     }
 }

@@ -2,6 +2,6 @@ package ed.maevski.androidpraktika.domain
 
 
 interface Item {
-    val id: Int
+    val id: String
     var isInFavorites: Boolean
 }

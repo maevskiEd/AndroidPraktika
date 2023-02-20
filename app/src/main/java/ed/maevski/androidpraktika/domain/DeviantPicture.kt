@@ -5,12 +5,13 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class DeviantPicture(
-    override val id: Int,
+    override val id: String,
     val title: String,
     val author: String,
     val picture: Int,
     val description: String,
-    val http: String,
+    val url: String,
+    val urlThumb150: String,
     val countFavorites: Int,
     val comments: Int,
     val countViews: Int,

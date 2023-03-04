@@ -24,7 +24,7 @@ object Converter {
                     isInFavorites = false,
                 )
             )
-            println(it)
+//            println(it)
         }
         return result
     }

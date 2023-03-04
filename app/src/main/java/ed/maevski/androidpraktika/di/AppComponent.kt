@@ -3,6 +3,7 @@ package ed.maevski.androidpraktika.di
 import dagger.Component
 import ed.maevski.androidpraktika.di.modules.RemoteModule
 import ed.maevski.androidpraktika.di.modules.DatabaseModule
+import ed.maevski.androidpraktika.di.modules.DomainBindsModule
 import ed.maevski.androidpraktika.di.modules.DomainModule
 import ed.maevski.androidpraktika.viewmodel.HomeFragmentViewModel
 import javax.inject.Singleton
@@ -13,7 +14,8 @@ import javax.inject.Singleton
     modules = [
         RemoteModule::class,
         DatabaseModule::class,
-        DomainModule::class
+        DomainModule::class,
+        DomainBindsModule::class
     ]
 )
 interface AppComponent {

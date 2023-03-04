@@ -23,11 +23,8 @@ class Interactor(
     //и страницу, которую нужно загрузить (это для пагинации)
     fun getFilmsFromApi(page: Int, callback: HomeFragmentViewModel.ApiCallback) {
         if (token.tokenKey == "") getTokenFromApi()
-        println("22222222222222. after if (token.tokenKey == \"\") getTokenFromApi() token -->>>" + token.tokenKey)
-        println("22222222222222" + token)
 
         if (token.tokenKey != "" && checkToken()) {
-            println("token -->>>" + token.tokenKey)
             retrofitService.getPictures(token.tokenKey, 0, 20)
                 .enqueue(object : Callback<DeviantartResponse> {
 
@@ -57,8 +54,6 @@ class Interactor(
                 ) {
                     //При успехе мы вызываем метод передаем onSuccess и в этот коллбэк список фильмов
                     token = Converter.convertApiTokenListToDtoToken(response.body())!!
-                    println("1111111111111. getTokenFromApi: token -->>>" + token.tokenKey)
-                    println("1111111111111." + token)
                 }
 
                 override fun onFailure(call: Call<TokenResponse>, t: Throwable) {
@@ -69,7 +64,6 @@ class Interactor(
     }
 
     fun checkToken(): Boolean {
-        println("checkToken(): token -->>>" + token.tokenKey)
         retrofitService.checkToken(token.tokenKey)
             .enqueue(object : Callback<TokenPlaceboResponse> {
                 var status: String = ""

@@ -9,7 +9,7 @@ import ed.maevski.androidpraktika.domain.Item
 class FavoritesFragmentViewModel: ViewModel() {
     val picturesListLiveData = MutableLiveData<List<Item>>()
 
-    private var interactor: Interactor = App.instance.interactor
+//    private var interactor: Interactor = App.instance.interactor
 
     init {
 /*        val films = interactor.getPicturesDB()

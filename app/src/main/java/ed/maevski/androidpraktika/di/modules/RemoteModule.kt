@@ -14,12 +14,14 @@ import javax.inject.Singleton
 
 @Module
 class RemoteModule {
+    private val halfMinuteForSlowInternet = 30L
+
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
         //Настраиваем таймауты для медленного интернета
-        .callTimeout(30, TimeUnit.SECONDS)
-        .readTimeout(30, TimeUnit.SECONDS)
+        .callTimeout(halfMinuteForSlowInternet, TimeUnit.SECONDS)
+        .readTimeout(halfMinuteForSlowInternet, TimeUnit.SECONDS)
         //Добавляем логгер
         .addInterceptor(HttpLoggingInterceptor().apply {
             if (BuildConfig.DEBUG) {

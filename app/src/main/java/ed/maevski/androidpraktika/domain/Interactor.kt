@@ -22,9 +22,9 @@ class Interactor(
     //В конструктор мы будем передавать коллбэк из вью модели, чтобы реагировать на то, когда фильмы будут получены
     //и страницу, которую нужно загрузить (это для пагинации)
     fun getFilmsFromApi(page: Int, callback: HomeFragmentViewModel.ApiCallback) {
-        if (token.tokenKey == "") getTokenFromApi()
+        if (token.tokenKey.isEmpty()) getTokenFromApi()
 
-        if (token.tokenKey != "" && checkToken()) {
+        if (token.tokenKey.isNotEmpty() && checkToken()) {
             retrofitService.getPictures(token.tokenKey, 0, 20)
                 .enqueue(object : Callback<DeviantartResponse> {
 

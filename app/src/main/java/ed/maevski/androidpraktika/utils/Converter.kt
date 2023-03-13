@@ -1,7 +1,9 @@
 package ed.maevski.androidpraktika.utils
 
 import ed.maevski.androidpraktika.data.entity.Results
+import ed.maevski.androidpraktika.data.entity_token.TokenResponse
 import ed.maevski.androidpraktika.domain.DeviantPicture
+import ed.maevski.androidpraktika.domain.Token
 
 object Converter {
     fun convertApiListToDtoList(list: List<Results>?): List<DeviantPicture> {
@@ -22,7 +24,12 @@ object Converter {
                     isInFavorites = false,
                 )
             )
+//            println(it)
         }
         return result
+    }
+
+    fun convertApiTokenListToDtoToken(tokenResponse: TokenResponse?): Token? {
+        return tokenResponse?.let { Token(it.access_token, true) }
     }
 }

@@ -6,6 +6,7 @@ import ed.maevski.androidpraktika.di.modules.DatabaseModule
 import ed.maevski.androidpraktika.di.modules.DomainBindsModule
 import ed.maevski.androidpraktika.di.modules.DomainModule
 import ed.maevski.androidpraktika.viewmodel.HomeFragmentViewModel
+import ed.maevski.androidpraktika.viewmodel.SettingsFragmentViewModel
 import javax.inject.Singleton
 
 @Singleton
@@ -21,4 +22,7 @@ import javax.inject.Singleton
 interface AppComponent {
     //метод для того, чтобы появилась внедрять зависимости в HomeFragmentViewModel
     fun inject(homeFragmentViewModel: HomeFragmentViewModel)
+
+    //метод для того, чтобы появилась возможность внедрять зависимости в SettingsFragmentViewModel
+    fun inject(settingsFragmentViewModel: SettingsFragmentViewModel)
 }

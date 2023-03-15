@@ -1,10 +1,9 @@
 package ed.maevski.androidpraktika.domain
 
-import ed.maevski.androidpraktika.App
 import ed.maevski.androidpraktika.data.API
-import ed.maevski.androidpraktika.data.ApiConstants
 import ed.maevski.androidpraktika.data.DeviantartApi
 import ed.maevski.androidpraktika.data.MainRepository
+import ed.maevski.androidpraktika.data.PreferenceProvider
 import ed.maevski.androidpraktika.data.entity.DeviantartResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenPlaceboResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenResponse
@@ -17,15 +16,16 @@ import retrofit2.Response
 class Interactor(
     private val repo: MainRepository,
     private val retrofitService: DeviantartApi,
-    var token: Token
+    var token: Token,
+    private val preferences: PreferenceProvider
 ) {
     //В конструктор мы будем передавать коллбэк из вью модели, чтобы реагировать на то, когда фильмы будут получены
     //и страницу, которую нужно загрузить (это для пагинации)
-    fun getFilmsFromApi(page: Int, callback: HomeFragmentViewModel.ApiCallback) {
+    fun getDeviantArtsFromApi(page: Int, callback: HomeFragmentViewModel.ApiCallback) {
         if (token.tokenKey.isEmpty()) getTokenFromApi()
 
         if (token.tokenKey.isNotEmpty() && checkToken()) {
-            retrofitService.getPictures(token.tokenKey, 0, 20)
+            retrofitService.getPictures(getDefaultCategoryFromPreferences(), token.tokenKey, 0, 20)
                 .enqueue(object : Callback<DeviantartResponse> {
 
                     override fun onResponse(
@@ -87,4 +87,12 @@ class Interactor(
 
         return token.status
     }
+
+    //Метод для сохранения настроек
+    fun saveDefaultCategoryToPreferences(category: String) {
+        preferences.saveDefaultCategory(category)
+    }
+
+    //Метод для получения настроек
+    fun getDefaultCategoryFromPreferences() = preferences.getDefaultCategory()
 }

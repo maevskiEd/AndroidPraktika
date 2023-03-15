@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import ed.maevski.androidpraktika.view.MainActivity
 import ed.maevski.androidpraktika.view.rv_adapters.PictureRecyclerAdapter
@@ -25,8 +24,6 @@ class HomeFragment() : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private val positionOne = 1
-
     private lateinit var adapter: PictureRecyclerAdapter
 
     private val viewModel: HomeFragmentViewModel by lazy {
@@ -37,7 +34,7 @@ class HomeFragment() : Fragment() {
         ViewModelProvider.NewInstanceFactory().create(HomeFragmentViewModel::class.java)
     }*/
 
-    private var items = listOf<Item>()
+    private var picturesDataBase = listOf<Item>()
         //Используем backing field
         set(value) {
             //Если придет такое же значение, то мы выходим из метода
@@ -45,7 +42,7 @@ class HomeFragment() : Fragment() {
             //Если пришло другое значение, то кладем его в переменную
             field = value
             //Обновляем RV адаптер
-            adapter.items = items
+            adapter.items = picturesDataBase
         }
 
     override fun onCreateView(
@@ -61,12 +58,14 @@ class HomeFragment() : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.picturesListLiveData.observe(viewLifecycleOwner) {
-            items = it
+            picturesDataBase = it
         }
 
 /*        viewModel.picturesListLiveData.observe(viewLifecycleOwner, Observer<List<Item>> {
             items = it
         })*/
+
+        initPullToRefresh()
 
         adapter = PictureRecyclerAdapter(object : PictureRecyclerAdapter.OnItemClickListener {
             override fun click(picture: DeviantPicture) {
@@ -75,7 +74,7 @@ class HomeFragment() : Fragment() {
             }
         })
 
-        adapter.items = items
+        adapter.items = picturesDataBase
         binding.mainRecycler.layoutManager = LinearLayoutManager(requireContext())
         val decorator = TopSpacingItemDecoration(8)
         binding.mainRecycler.addItemDecoration(decorator)
@@ -84,7 +83,7 @@ class HomeFragment() : Fragment() {
         AnimationHelper.performFragmentCircularRevealAnimation(
             binding.homeFragmentRoot,
             requireActivity(),
-            positionOne
+            POSITION_ONE
         )
 
         requireActivity().onBackPressedDispatcher.addCallback(
@@ -108,10 +107,10 @@ class HomeFragment() : Fragment() {
             //Этот метод отрабатывает на каждое изменения текста
             override fun onQueryTextChange(newText: String): Boolean {
                 val deviantPictures: List<DeviantPicture> =
-                    items.filter { it is DeviantPicture } as List<DeviantPicture>
+                    picturesDataBase.filter { it is DeviantPicture } as List<DeviantPicture>
                 //Если ввод пуст то вставляем в адаптер всю БД
                 if (newText.isEmpty()) {
-                    adapter.items = items
+                    adapter.items = picturesDataBase
                     binding.mainRecycler.adapter = adapter
                     return true
                 }
@@ -129,8 +128,25 @@ class HomeFragment() : Fragment() {
         })
     }
 
+    private fun initPullToRefresh() {
+        //Вешаем слушатель, чтобы вызвался pull to refresh
+        binding.pullToRefresh.setOnRefreshListener {
+            //Чистим адаптер(items нужно будет сделать паблик или создать для этого публичный метод)
+/*            adapter.items.
+            filmsAdapter.items.clear()*/
+            //Делаем новый запрос фильмов на сервер
+            viewModel.getDeviantArts()
+            //Убираем крутящееся колечко
+            binding.pullToRefresh.isRefreshing = false
+        }
+    }
+
     override fun onDestroyView() {
         _binding = null
         super.onDestroyView()
+    }
+
+    companion object {
+        private const val POSITION_ONE = 1
     }
 }

@@ -24,7 +24,8 @@ class Interactor(
     fun getDeviantArtsFromApi(page: Int, callback: HomeFragmentViewModel.ApiCallback) {
         if (token.tokenKey.isEmpty()) getTokenFromApi()
 
-        if (token.tokenKey.isNotEmpty() && checkToken()) {
+//        if (token.tokenKey.isNotEmpty() && checkToken()) {
+        if (token.tokenKey.isNotEmpty()) {
             retrofitService.getPictures(getDefaultCategoryFromPreferences(), token.tokenKey, 0, 20)
                 .enqueue(object : Callback<DeviantartResponse> {
 
@@ -32,11 +33,17 @@ class Interactor(
                         call: Call<DeviantartResponse>,
                         response: Response<DeviantartResponse>
                     ) {
-                        //При успехе мы вызываем метод передаем onSuccess и в этот коллбэк список фильмов
-                        callback.onSuccess(Converter.convertApiListToDtoList(response.body()?.results))
+                        //При успехе мы вызываем метод, передаем onSuccess и в этот коллбэк список фильмов
+                        val list = Converter.convertApiListToDtoList(response.body()?.results)
+                        //Кладем фильмы в бд
+                        list.forEach {
+                            repo.putToDb(deviantPicture = it, preferences.getDefaultCategory())
+                        }
+                        callback.onSuccess(list)
                     }
 
                     override fun onFailure(call: Call<DeviantartResponse>, t: Throwable) {
+                        println("override fun onFailure(call: Call<DeviantartResponse>, t: Throwable)")
                         //В случае провала вызываем другой метод коллбека
                         callback.onFailure()
                     }
@@ -95,4 +102,10 @@ class Interactor(
 
     //Метод для получения настроек
     fun getDefaultCategoryFromPreferences() = preferences.getDefaultCategory()
+
+    fun getDeviantPicturesFromDB(): List<DeviantPicture> = repo.getAllFromDB()
+
+    fun getDeviantPicturesFromDBWithCategory(): List<DeviantPicture> {
+        return repo.getCategoryFromDB(preferences.getDefaultCategory())
+    }
 }

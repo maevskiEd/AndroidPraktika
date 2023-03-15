@@ -22,13 +22,19 @@ class HomeFragmentViewModel: ViewModel() {
         getDeviantArts()
     }
 
+
     fun getDeviantArts() {
         interactor.getDeviantArtsFromApi(1, object : ApiCallback {
             override fun onSuccess(pictures: List<Item>) {
+                println("onSuccess")
+
                 picturesListLiveData.postValue(pictures)
             }
 
             override fun onFailure() {
+//                picturesListLiveData.postValue(interactor.getDeviantPicturesFromDB())
+                println("onFailure")
+                picturesListLiveData.postValue(interactor.getDeviantPicturesFromDBWithCategory())
             }
         })
     }

@@ -5,12 +5,14 @@ import ed.maevski.androidpraktika.data.entity_token.TokenPlaceboResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenResponse
 import retrofit2.Call
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface DeviantartApi {
 
-    @GET("api/v1/oauth2/browse/newest")
+    @GET("api/v1/oauth2/browse/{category}")
     fun getPictures(
+        @Path("category") category: String,
         @Query("access_token") tokenKey: String,
         @Query("offset") offset: Int,
         @Query("limit") limit: Int,

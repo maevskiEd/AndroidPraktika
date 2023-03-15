@@ -14,14 +14,13 @@ import javax.inject.Singleton
 
 @Module
 class RemoteModule {
-    private val halfMinuteForSlowInternet = 30L
 
     @Provides
     @Singleton
     fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
         //Настраиваем таймауты для медленного интернета
-        .callTimeout(halfMinuteForSlowInternet, TimeUnit.SECONDS)
-        .readTimeout(halfMinuteForSlowInternet, TimeUnit.SECONDS)
+        .callTimeout(HALF_MINUTE_FOR_SLOW_INTERNET, TimeUnit.SECONDS)
+        .readTimeout(HALF_MINUTE_FOR_SLOW_INTERNET, TimeUnit.SECONDS)
         //Добавляем логгер
         .addInterceptor(HttpLoggingInterceptor().apply {
             if (BuildConfig.DEBUG) {
@@ -44,4 +43,8 @@ class RemoteModule {
     @Provides
     @Singleton
     fun provideTmdbApi(retrofit: Retrofit): DeviantartApi = retrofit.create(DeviantartApi::class.java)
+
+    companion object {
+        private const val HALF_MINUTE_FOR_SLOW_INTERNET = 30L
+    }
 }

@@ -1,6 +1,7 @@
 package ed.maevski.androidpraktika.di
 
 import dagger.Component
+import ed.maevski.androidpraktika.data.PreferenceProvider
 import ed.maevski.androidpraktika.di.modules.RemoteModule
 import ed.maevski.androidpraktika.di.modules.DatabaseModule
 import ed.maevski.androidpraktika.di.modules.DomainBindsModule

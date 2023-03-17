@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import ed.maevski.androidpraktika.R
-import ed.maevski.androidpraktika.domain.DeviantPicture
+import ed.maevski.androidpraktika.data.entity.DeviantPicture
 import ed.maevski.androidpraktika.databinding.FragmentDetailsBinding
 
 class DetailsFragment : Fragment() {

@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import ed.maevski.androidpraktika.R
-import ed.maevski.androidpraktika.domain.DeviantPicture
+import ed.maevski.androidpraktika.data.entity.DeviantPicture
 import ed.maevski.androidpraktika.databinding.ActivityMainBinding
 import ed.maevski.androidpraktika.view.fragments.*
 

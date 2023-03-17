@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
-import ed.maevski.androidpraktika.domain.DeviantPicture
+import ed.maevski.androidpraktika.data.entity.DeviantPicture
 import ed.maevski.androidpraktika.domain.Item
 import ed.maevski.androidpraktika.databinding.ItemPictureBinding
 import ed.maevski.androidpraktika.view.rv_adapters.PictureRecyclerAdapter

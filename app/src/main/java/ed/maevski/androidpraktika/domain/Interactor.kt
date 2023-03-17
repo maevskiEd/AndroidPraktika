@@ -4,6 +4,7 @@ import ed.maevski.androidpraktika.data.API
 import ed.maevski.androidpraktika.data.DeviantartApi
 import ed.maevski.androidpraktika.data.MainRepository
 import ed.maevski.androidpraktika.data.PreferenceProvider
+import ed.maevski.androidpraktika.data.entity.DeviantPicture
 import ed.maevski.androidpraktika.data.entity.DeviantartResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenPlaceboResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenResponse
@@ -35,10 +36,11 @@ class Interactor(
                     ) {
                         //При успехе мы вызываем метод, передаем onSuccess и в этот коллбэк список фильмов
                         val list = Converter.convertApiListToDtoList(response.body()?.results)
+                        repo.putToDb(list)
                         //Кладем фильмы в бд
-                        list.forEach {
+/*                        list.forEach {
                             repo.putToDb(deviantPicture = it, preferences.getDefaultCategory())
-                        }
+                        }*/
                         callback.onSuccess(list)
                     }
 

@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import ed.maevski.androidpraktika.view.MainActivity
 import ed.maevski.androidpraktika.view.rv_adapters.PictureRecyclerAdapter
-import ed.maevski.androidpraktika.domain.DeviantPicture
+import ed.maevski.androidpraktika.data.entity.DeviantPicture
 import ed.maevski.androidpraktika.domain.Item
 import ed.maevski.androidpraktika.databinding.FragmentHomeBinding
 import ed.maevski.androidpraktika.view.decoration.TopSpacingItemDecoration

@@ -2,7 +2,7 @@ package ed.maevski.androidpraktika.utils
 
 import ed.maevski.androidpraktika.data.entity.Results
 import ed.maevski.androidpraktika.data.entity_token.TokenResponse
-import ed.maevski.androidpraktika.domain.DeviantPicture
+import ed.maevski.androidpraktika.data.entity.DeviantPicture
 import ed.maevski.androidpraktika.domain.Token
 
 object Converter {
@@ -22,6 +22,7 @@ object Converter {
                     comments = it.stats.comments,
                     countViews = 100000,
                     isInFavorites = false,
+                    setting = ""
                 )
             )
 //            println(it)

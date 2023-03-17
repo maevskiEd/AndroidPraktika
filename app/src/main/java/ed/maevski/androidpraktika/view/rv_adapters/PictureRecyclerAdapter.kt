@@ -1,7 +1,7 @@
 package ed.maevski.androidpraktika.view.rv_adapters
 
 import com.hannesdorfmann.adapterdelegates4.ListDelegationAdapter
-import ed.maevski.androidpraktika.domain.DeviantPicture
+import ed.maevski.androidpraktika.data.entity.DeviantPicture
 import ed.maevski.androidpraktika.domain.Item
 import ed.maevski.androidpraktika.view.adapters.AdDelegateAdapter
 import ed.maevski.androidpraktika.view.adapters.PictureDelegateAdapter

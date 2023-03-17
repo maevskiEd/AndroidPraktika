@@ -70,4 +70,8 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.44.2'
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+
+    //Room
+    implementation "androidx.room:room-runtime:2.5.0"
+    kapt "androidx.room:room-compiler:2.5.0"
 }

@@ -6,11 +6,12 @@ import ed.maevski.androidpraktika.App
 import ed.maevski.androidpraktika.domain.Interactor
 import ed.maevski.androidpraktika.domain.Item
 import ed.maevski.androidpraktika.domain.Token
+import java.util.concurrent.Executors
 import javax.inject.Inject
 
-class HomeFragmentViewModel: ViewModel() {
-//    val picturesListLiveData = MutableLiveData<List<Item>>()
-    val picturesListLiveData:  MutableLiveData<List<Item>> = MutableLiveData()
+class HomeFragmentViewModel : ViewModel() {
+    //    val picturesListLiveData = MutableLiveData<List<Item>>()
+    val picturesListLiveData: MutableLiveData<List<Item>> = MutableLiveData()
 
     //Инициализируем интерактор
     @Inject
@@ -32,9 +33,11 @@ class HomeFragmentViewModel: ViewModel() {
             }
 
             override fun onFailure() {
-//                picturesListLiveData.postValue(interactor.getDeviantPicturesFromDB())
                 println("onFailure")
-                picturesListLiveData.postValue(interactor.getDeviantPicturesFromDBWithCategory())
+//                picturesListLiveData.postValue(interactor.getDeviantPicturesFromDBWithCategory())
+                Executors.newSingleThreadExecutor().execute {
+                    picturesListLiveData.postValue(interactor.getDeviantPicturesFromDB())
+                }
             }
         })
     }

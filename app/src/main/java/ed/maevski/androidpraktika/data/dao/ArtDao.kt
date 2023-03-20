@@ -1,5 +1,6 @@
 package ed.maevski.androidpraktika.data.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import ed.maevski.androidpraktika.data.entity.DeviantPicture
 
@@ -8,10 +9,10 @@ import ed.maevski.androidpraktika.data.entity.DeviantPicture
 interface ArtDao {
     //Запрос на всю таблицу
     @Query("SELECT * FROM cached_arts")
-    fun getCachedFilms(): List<DeviantPicture>
+    fun getCachedFilms(): LiveData<List<DeviantPicture>>
 
     @Query("SELECT * FROM cached_arts WHERE setting LIKE :search")
-    fun getCachedFilmsWithCategory(search: String): List<DeviantPicture>
+    fun getCachedFilmsWithCategory(search: String): LiveData<List<DeviantPicture>>
 
     //Кладём списком в БД, в случае конфликта перезаписываем
     @Insert(onConflict = OnConflictStrategy.REPLACE)

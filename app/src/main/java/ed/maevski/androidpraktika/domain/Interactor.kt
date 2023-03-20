@@ -1,5 +1,6 @@
 package ed.maevski.androidpraktika.domain
 
+import androidx.lifecycle.LiveData
 import ed.maevski.androidpraktika.data.API
 import ed.maevski.androidpraktika.data.DeviantartApi
 import ed.maevski.androidpraktika.data.MainRepository
@@ -37,11 +38,7 @@ class Interactor(
                         //При успехе мы вызываем метод, передаем onSuccess и в этот коллбэк список фильмов
                         val list = Converter.convertApiListToDtoList(response.body()?.results)
                         repo.putToDb(list)
-                        //Кладем фильмы в бд
-/*                        list.forEach {
-                            repo.putToDb(deviantPicture = it, preferences.getDefaultCategory())
-                        }*/
-                        callback.onSuccess(list)
+                        callback.onSuccess()
                     }
 
                     override fun onFailure(call: Call<DeviantartResponse>, t: Throwable) {
@@ -105,9 +102,9 @@ class Interactor(
     //Метод для получения настроек
     fun getDefaultCategoryFromPreferences() = preferences.getDefaultCategory()
 
-    fun getDeviantPicturesFromDB(): List<DeviantPicture> = repo.getAllFromDB()
+    fun getDeviantPicturesFromDB(): LiveData<List<DeviantPicture>> = repo.getAllFromDB()
 
-    fun getDeviantPicturesFromDBWithCategory(): List<DeviantPicture> {
+    fun getDeviantPicturesFromDBWithCategory(): LiveData<List<DeviantPicture>> {
         return repo.getCategoryFromDB(preferences.getDefaultCategory())
     }
 }

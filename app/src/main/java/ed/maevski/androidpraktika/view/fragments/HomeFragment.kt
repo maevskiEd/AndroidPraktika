@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import ed.maevski.androidpraktika.view.MainActivity
@@ -56,14 +57,6 @@ class HomeFragment() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel.picturesListLiveData.observe(viewLifecycleOwner) {
-            picturesDataBase = it
-        }
-
-/*        viewModel.picturesListLiveData.observe(viewLifecycleOwner, Observer<List<Item>> {
-            items = it
-        })*/
 
         initPullToRefresh()
 
@@ -126,6 +119,14 @@ class HomeFragment() : Fragment() {
                 return true
             }
         })
+
+        viewModel.picturesListLiveData.observe(viewLifecycleOwner) {
+            picturesDataBase = it
+        }
+
+        viewModel.showProgressBar.observe(viewLifecycleOwner) {
+            binding.progressBar.isVisible = it
+        }
     }
 
     private fun initPullToRefresh() {

@@ -1,5 +1,6 @@
 package ed.maevski.androidpraktika.data
 
+import androidx.lifecycle.LiveData
 import ed.maevski.androidpraktika.data.dao.ArtDao
 import ed.maevski.androidpraktika.data.entity.DeviantPicture
 import java.util.concurrent.Executors
@@ -12,11 +13,11 @@ class MainRepository(private val artDao: ArtDao) {
         }
     }
 
-    fun getAllFromDB(): List<DeviantPicture> {
+    fun getAllFromDB(): LiveData<List<DeviantPicture>> {
         return artDao.getCachedFilms()
     }
 
-    fun getCategoryFromDB(setting: String): List<DeviantPicture> {
+    fun getCategoryFromDB(setting: String): LiveData<List<DeviantPicture>> {
         return artDao.getCachedFilmsWithCategory(setting)
     }
 

@@ -6,7 +6,7 @@ import ed.maevski.androidpraktika.data.entity.DeviantPicture
 import ed.maevski.androidpraktika.domain.Token
 
 object Converter {
-    fun convertApiListToDtoList(list: List<Results>?): List<DeviantPicture> {
+    fun convertApiListToDtoList(list: List<Results>?, _setting: String): List<DeviantPicture> {
         val result = mutableListOf<DeviantPicture>()
         list?.forEach {
             result.add(
@@ -22,7 +22,7 @@ object Converter {
                     comments = it.stats.comments,
                     countViews = 100000,
                     isInFavorites = false,
-                    setting = ""
+                    setting = _setting
                 )
             )
 //            println(it)

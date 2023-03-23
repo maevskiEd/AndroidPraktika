@@ -14,11 +14,16 @@ class MainRepository(private val artDao: ArtDao) {
     }
 
     fun getAllFromDB(): LiveData<List<DeviantPicture>> {
-        return artDao.getCachedFilms()
+        val a = artDao.getCachedFilms()
+        println("getAllFromDB - > $a -> ${a.value}")
+
+        return a
     }
 
     fun getCategoryFromDB(setting: String): LiveData<List<DeviantPicture>> {
-        return artDao.getCachedFilmsWithCategory(setting)
+        val a = artDao.getCachedFilmsWithCategory(setting)
+        println("getCategoryFromDB - > $a -> ${a.value}")
+        return a
     }
 
     fun deleteFromDB(deviantPicture: DeviantPicture){

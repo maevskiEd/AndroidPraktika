@@ -9,7 +9,7 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import ed.maevski.androidpraktika.view.MainActivity
 import ed.maevski.androidpraktika.view.rv_adapters.PictureRecyclerAdapter
@@ -27,13 +27,7 @@ class HomeFragment() : Fragment() {
 
     private lateinit var adapter: PictureRecyclerAdapter
 
-    private val viewModel: HomeFragmentViewModel by lazy {
-        ViewModelProvider(this)[HomeFragmentViewModel::class.java]
-    }
-
-/*    private val viewModel by lazy {
-        ViewModelProvider.NewInstanceFactory().create(HomeFragmentViewModel::class.java)
-    }*/
+    private val homeFragmentViewModel: HomeFragmentViewModel by viewModels()
 
     private var picturesDataBase = listOf<Item>()
         //Используем backing field
@@ -51,6 +45,9 @@ class HomeFragment() : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
+
+        println("HomeFragment: onCreateView")
+
         return binding.root
     }
 
@@ -58,7 +55,10 @@ class HomeFragment() : Fragment() {
 
         super.onViewCreated(view, savedInstanceState)
 
-        initPullToRefresh()
+        println("HomeFragment: onViewCreated")
+
+        homeFragmentViewModel.getDeviantArts()
+        homeFragmentViewModel.picturesListLiveData = homeFragmentViewModel.interactor.getDeviantPicturesFromDBWithCategory()
 
         adapter = PictureRecyclerAdapter(object : PictureRecyclerAdapter.OnItemClickListener {
             override fun click(picture: DeviantPicture) {
@@ -120,23 +120,26 @@ class HomeFragment() : Fragment() {
             }
         })
 
-        viewModel.picturesListLiveData.observe(viewLifecycleOwner) {
+        homeFragmentViewModel.picturesListLiveData.observe(viewLifecycleOwner) {
+            println("homeFragmentViewModel.picturesListLiveData.observe -> $it")
             picturesDataBase = it
         }
 
-        viewModel.showProgressBar.observe(viewLifecycleOwner) {
+/*        homeFragmentViewModel.showProgressBar.observe(viewLifecycleOwner) {
             binding.progressBar.isVisible = it
-        }
+        }*/
+
+        initPullToRefresh()
     }
 
     private fun initPullToRefresh() {
         //Вешаем слушатель, чтобы вызвался pull to refresh
         binding.pullToRefresh.setOnRefreshListener {
             //Чистим адаптер(items нужно будет сделать паблик или создать для этого публичный метод)
-/*            adapter.items.
-            filmsAdapter.items.clear()*/
+//            adapter.items.
+/*            filmsAdapter.items.clear()*/
             //Делаем новый запрос фильмов на сервер
-            viewModel.getDeviantArts()
+            homeFragmentViewModel.getDeviantArts()
             //Убираем крутящееся колечко
             binding.pullToRefresh.isRefreshing = false
         }

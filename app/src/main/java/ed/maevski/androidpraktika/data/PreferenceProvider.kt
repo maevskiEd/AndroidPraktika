@@ -28,10 +28,22 @@ class PreferenceProvider(context: Context) {
     fun getDefaultCategory(): String {
         return preference.getString(KEY_DEFAULT_CATEGORY, DEFAULT_CATEGORY) ?: DEFAULT_CATEGORY
     }
+
+    //Token prefs
+    //Сохраняем категорию
+    fun saveToken(token: String) {
+        preference.edit { putString(KEY_ACCESS_TOKEN, token).apply() }
+    }
+    //Забираем категорию
+    fun getToken(): String {
+        return preference.getString(KEY_ACCESS_TOKEN, "") ?: ""
+    }
+
     //Ключи для наших настроек, по ним мы их будем получать
     companion object {
         private const val KEY_FIRST_LAUNCH = "first_launch"
         private const val KEY_DEFAULT_CATEGORY = "default_category"
+        private const val KEY_ACCESS_TOKEN = "access_token"
         private const val DEFAULT_CATEGORY = "newest"
     }
 }

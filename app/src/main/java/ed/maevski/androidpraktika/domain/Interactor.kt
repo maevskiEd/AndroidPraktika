@@ -1,15 +1,14 @@
 package ed.maevski.androidpraktika.domain
 
-import ed.maevski.androidpraktika.data.API
-import ed.maevski.androidpraktika.data.DeviantartApi
-import ed.maevski.androidpraktika.data.MainRepository
-import ed.maevski.androidpraktika.data.PreferenceProvider
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import ed.maevski.androidpraktika.data.*
 import ed.maevski.androidpraktika.data.entity.DeviantPicture
 import ed.maevski.androidpraktika.data.entity.DeviantartResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenPlaceboResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenResponse
 import ed.maevski.androidpraktika.utils.Converter
-import ed.maevski.androidpraktika.viewmodel.HomeFragmentViewModel
+import ed.maevski.androidpraktika.viewmodel.MainActivityViewModel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,38 +21,48 @@ class Interactor(
 ) {
     //В конструктор мы будем передавать коллбэк из вью модели, чтобы реагировать на то, когда фильмы будут получены
     //и страницу, которую нужно загрузить (это для пагинации)
-    fun getDeviantArtsFromApi(page: Int, callback: HomeFragmentViewModel.ApiCallback) {
-        if (token.tokenKey.isEmpty()) getTokenFromApi()
+    fun getDeviantArtsFromApi(page:Int, callback: ApiCallback) {
+        val accessToken = preferences.getToken()
 
-//        if (token.tokenKey.isNotEmpty() && checkToken()) {
-        if (token.tokenKey.isNotEmpty()) {
-            retrofitService.getPictures(getDefaultCategoryFromPreferences(), token.tokenKey, 0, 20)
-                .enqueue(object : Callback<DeviantartResponse> {
+        println("getDeviantArtsFromApi")
+        retrofitService.getPictures(getDefaultCategoryFromPreferences(), accessToken, 0, 20)
+            .enqueue(object : Callback<DeviantartResponse> {
 
-                    override fun onResponse(
-                        call: Call<DeviantartResponse>,
-                        response: Response<DeviantartResponse>
-                    ) {
-                        //При успехе мы вызываем метод, передаем onSuccess и в этот коллбэк список фильмов
-                        val list = Converter.convertApiListToDtoList(response.body()?.results)
-                        repo.putToDb(list)
-                        //Кладем фильмы в бд
-/*                        list.forEach {
-                            repo.putToDb(deviantPicture = it, preferences.getDefaultCategory())
-                        }*/
-                        callback.onSuccess(list)
-                    }
+                override fun onResponse(
+                    call: Call<DeviantartResponse>,
+                    response: Response<DeviantartResponse>
+                ) {
+                    println("getDeviantArtsFromApi: onResponse")
 
-                    override fun onFailure(call: Call<DeviantartResponse>, t: Throwable) {
-                        println("override fun onFailure(call: Call<DeviantartResponse>, t: Throwable)")
-                        //В случае провала вызываем другой метод коллбека
-                        callback.onFailure()
-                    }
-                })
-        }
+                    //При успехе мы вызываем метод, передаем onSuccess и в этот коллбэк список фильмов
+                    val list = Converter.convertApiListToDtoList(response.body()?.results, preferences.getDefaultCategory())
+
+                    println("call: $call")
+                    println("response: $response")
+                    println("response.isSuccessful: ${response.isSuccessful}")
+                    println("response.body: ${response.body()}")
+                    println("response.code: ${response.code()}")
+                    println("response.headers: ${response.headers()}")
+                    println("response.errorBody: ${response.errorBody()}")
+                    println("response.message: ${response.message()}")
+                    println("response.raw: ${response.raw()}")
+                    println(response.body()?.results)
+                    println("list: $list ")
+
+                    repo.putToDb(list)
+                    callback.onSuccess()
+                }
+
+                override fun onFailure(call: Call<DeviantartResponse>, t: Throwable) {
+                    println("override fun onFailure(call: Call<DeviantartResponse>, t: Throwable)")
+                    //В случае провала вызываем другой метод коллбека
+                    println("getDeviantArtsFromApi: onFailure")
+                    callback.onFailure()
+                }
+            })
     }
 
-    fun getTokenFromApi() {
+    fun getTokenFromApi(flagToken: MutableLiveData<Boolean>, errorEvent: MainActivityViewModel.SingleLiveEvent<String>) {
         retrofitService.getToken("client_credentials", API.CLIENT_ID, API.CLIENT_SECRET)
             .enqueue(object : Callback<TokenResponse> {
 
@@ -61,40 +70,55 @@ class Interactor(
                     call: Call<TokenResponse>,
                     response: Response<TokenResponse>
                 ) {
-                    //При успехе мы вызываем метод передаем onSuccess и в этот коллбэк список фильмов
-                    token = Converter.convertApiTokenListToDtoToken(response.body())!!
+                    println("getTokenFromApi: onResponse")
+
+                    if (response.body()?.status.equals("success")) {
+                        println("getTokenFromApi: onResponse -> success")
+
+                        saveAccessTokenFromPreferences(response.body()?.access_token ?: "")
+                        flagToken.postValue(false)
+                    } else {
+//                        errorEvent.post
+                    }
                 }
 
                 override fun onFailure(call: Call<TokenResponse>, t: Throwable) {
-                    //В случае провала вызываем другой метод коллбека
-                    t.printStackTrace()
+//                    t.printStackTrace()
+                    flagToken.postValue(false)
+                    errorEvent.postValue("connect ERROR")
                 }
             })
     }
 
-    fun checkToken(): Boolean {
-        retrofitService.checkToken(token.tokenKey)
+    fun checkToken(accessToken: String, flagToken: MutableLiveData<Boolean>,errorEvent: MainActivityViewModel.SingleLiveEvent<String>){
+        retrofitService.checkToken(accessToken)
             .enqueue(object : Callback<TokenPlaceboResponse> {
-                var status: String = ""
 
                 override fun onResponse(
                     call: Call<TokenPlaceboResponse>,
                     response: Response<TokenPlaceboResponse>
                 ) {
-                    //При успехе мы вызываем метод передаем onSuccess и в этот коллбэк список фильмов
-                    status = response.body()?.status ?: ""
-                    if (status == "success") token.status = true
-                    else getTokenFromApi()
+                    println("checkToken: onResponse")
+
+                    if (response.body()?.status.equals("success")) {
+                        println("checkToken: onResponse  -> success")
+
+                        println("response.body()?.status : ${response.body()?.status}")
+                        flagToken.postValue(false)
+                    } else {
+                        println("checkToken: onResponse  -> error")
+                        println("checkToken: onResponse  -> getTokenFromApi")
+
+                        getTokenFromApi(flagToken, errorEvent)
+                    }
                 }
 
                 override fun onFailure(call: Call<TokenPlaceboResponse>, t: Throwable) {
-                    //В случае провала вызываем другой метод коллбека
-                    token.status = false
-                    t.printStackTrace()
+//                    t.printStackTrace()
+                    errorEvent.postValue("connect ERROR")
+
                 }
             })
-
-        return token.status
     }
 
     //Метод для сохранения настроек
@@ -105,9 +129,16 @@ class Interactor(
     //Метод для получения настроек
     fun getDefaultCategoryFromPreferences() = preferences.getDefaultCategory()
 
-    fun getDeviantPicturesFromDB(): List<DeviantPicture> = repo.getAllFromDB()
+    fun getAccessTokenFromPreferences() = preferences.getToken()
 
-    fun getDeviantPicturesFromDBWithCategory(): List<DeviantPicture> {
+    fun saveAccessTokenFromPreferences(accessToken: String) {
+        preferences.saveToken(accessToken)
+    }
+
+    fun getDeviantPicturesFromDB(): LiveData<List<DeviantPicture>> = repo.getAllFromDB()
+
+    fun getDeviantPicturesFromDBWithCategory(): LiveData<List<DeviantPicture>> {
+        println("getDeviantPicturesFromDBWithCategory -> ${preferences.getDefaultCategory()}")
         return repo.getCategoryFromDB(preferences.getDefaultCategory())
     }
 }

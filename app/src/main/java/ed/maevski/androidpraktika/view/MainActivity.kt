@@ -2,14 +2,20 @@ package ed.maevski.androidpraktika.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Toast
+import androidx.activity.viewModels
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import ed.maevski.androidpraktika.R
 import ed.maevski.androidpraktika.data.entity.DeviantPicture
 import ed.maevski.androidpraktika.databinding.ActivityMainBinding
 import ed.maevski.androidpraktika.view.fragments.*
+import ed.maevski.androidpraktika.viewmodel.MainActivityViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
+
+    val mainActivityViewModel: MainActivityViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -17,13 +23,25 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        supportFragmentManager
-            .beginTransaction()
-            .add(R.id.fragment_placeholder, HomeFragment())
-            .addToBackStack(null)
-            .commit()
+        mainActivityViewModel.flagToken.observe(this) {
+            println("V>> mainActivityViewModel.flagToken.observe: this = $it")
+            binding.mainProgressBar.isVisible = it
 
-        initMenu()
+            if (it) return@observe
+
+            supportFragmentManager
+                .beginTransaction()
+                .add(R.id.fragment_placeholder, HomeFragment())
+                .addToBackStack(null)
+                .commit()
+
+            initMenu()
+
+        }
+
+        mainActivityViewModel.errorEvent.observe(this) {
+            Toast.makeText(this,it, Toast.LENGTH_SHORT).show()
+        }
     }
 
     //Ищем фрагмент по тегу, если он есть то возвращаем его, если нет, то null
@@ -89,7 +107,7 @@ class MainActivity : AppCompatActivity() {
                 R.id.settings -> {
                     val tag = "settings"
                     val fragment = checkFragmentExistence(tag)
-                    changeFragment( fragment?: SettingsFragment(), tag)
+                    changeFragment(fragment ?: SettingsFragment(), tag)
                     true
                 }
                 else -> false

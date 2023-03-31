@@ -18,7 +18,7 @@
         android:theme="@style/Theme.AndroidPraktika"
         tools:targetApi="31">
         <activity
-            android:name=".view.SplashScreenActivity"
+            android:name=".view.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.AndroidPraktika.NoActionBar">
             <intent-filter>
@@ -31,15 +31,7 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <activity
-            android:name=".view.MainActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AndroidPraktika.NoActionBar">
-
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
     </application>
 
 </manifest>
+

@@ -1,17 +1,19 @@
 package ed.maevski.androidpraktika.domain
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import ed.maevski.androidpraktika.data.*
 import ed.maevski.androidpraktika.data.entity.DeviantPicture
 import ed.maevski.androidpraktika.data.entity.DeviantartResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenPlaceboResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenResponse
-import ed.maevski.androidpraktika.utils.Converter
-import ed.maevski.androidpraktika.viewmodel.MainActivityViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class Interactor(
     private val repo: MainRepository,
@@ -19,10 +21,12 @@ class Interactor(
     var token: Token,
     private val preferences: PreferenceProvider
 ) {
-    //В конструктор мы будем передавать коллбэк из вью модели, чтобы реагировать на то, когда фильмы будут получены
+    val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
+
     //и страницу, которую нужно загрузить (это для пагинации)
-    fun getDeviantArtsFromApi(page:Int, callback: ApiCallback) {
+    fun getDeviantArtsFromApi(page: Int) {
         val accessToken = preferences.getToken()
+        var list: List<DeviantPicture>? = null
 
         println("getDeviantArtsFromApi")
         retrofitService.getPictures(getDefaultCategoryFromPreferences(), accessToken, 0, 20)
@@ -34,91 +38,136 @@ class Interactor(
                 ) {
                     println("getDeviantArtsFromApi: onResponse")
 
-                    //При успехе мы вызываем метод, передаем onSuccess и в этот коллбэк список фильмов
-                    val list = Converter.convertApiListToDtoList(response.body()?.results, preferences.getDefaultCategory())
+                    scope.launch {
+                        launch {
+                            println("getDeviantArtsFromApi: onResponse: map: Begin")
 
-                    println("call: $call")
-                    println("response: $response")
-                    println("response.isSuccessful: ${response.isSuccessful}")
-                    println("response.body: ${response.body()}")
-                    println("response.code: ${response.code()}")
-                    println("response.headers: ${response.headers()}")
-                    println("response.errorBody: ${response.errorBody()}")
-                    println("response.message: ${response.message()}")
-                    println("response.raw: ${response.raw()}")
-                    println(response.body()?.results)
-                    println("list: $list ")
+                            response.body()?.let { response ->
+                                list =
+                                    listOf(response.results).asFlow()?.flatMapConcat { it.asFlow() }
+                                        ?.filter{it.category == "Visual Art"}
+                                        ?.map { it ->
+                                                DeviantPicture(
+                                                    id = it.deviationid,
+                                                    title = it.title,
+                                                    author = it.author.username,
+                                                    picture = 0,
+                                                    description = "",
+                                                    url = it.preview.src,
+                                                    urlThumb150 = it.thumbs[0].src,
+                                                    countFavorites = it.stats.favourites,
+                                                    comments = it.stats.comments,
+                                                    countViews = 100000,
+                                                    isInFavorites = false,
+                                                    setting = preferences.getDefaultCategory()
+                                                )
+                                        }?.toList()
+                            }
+                            println("getDeviantArtsFromApi: onResponse: map: End")
+                        }.join()
 
-                    repo.putToDb(list)
-                    callback.onSuccess()
+                        launch {
+                            println("call: $call")
+                            println("response: $response")
+                            println("response.isSuccessful: ${response.isSuccessful}")
+                            println("response.body: ${response.body()}")
+                            println("response.code: ${response.code()}")
+                            println("response.headers: ${response.headers()}")
+                            println("response.errorBody: ${response.errorBody()}")
+                            println("response.message: ${response.message()}")
+                            println("response.raw: ${response.raw()}")
+                            println(response.body()?.results)
+                            println("list: $list ")
+
+                            list?.let { repo.putToDb(it) }
+                        }
+                    }
                 }
 
                 override fun onFailure(call: Call<DeviantartResponse>, t: Throwable) {
                     println("override fun onFailure(call: Call<DeviantartResponse>, t: Throwable)")
                     //В случае провала вызываем другой метод коллбека
                     println("getDeviantArtsFromApi: onFailure")
-                    callback.onFailure()
                 }
             })
     }
 
-    fun getTokenFromApi(flagToken: MutableLiveData<Boolean>, errorEvent: MainActivityViewModel.SingleLiveEvent<String>) {
-        retrofitService.getToken("client_credentials", API.CLIENT_ID, API.CLIENT_SECRET)
-            .enqueue(object : Callback<TokenResponse> {
+    suspend fun getTokenFromApi(scope: CoroutineScope) {
+        return suspendCoroutine { continuation ->
+            scope.launch {
+                launch {
+                    retrofitService.getToken("client_credentials", API.CLIENT_ID, API.CLIENT_SECRET)
+                        .enqueue(object : Callback<TokenResponse> {
 
-                override fun onResponse(
-                    call: Call<TokenResponse>,
-                    response: Response<TokenResponse>
-                ) {
-                    println("getTokenFromApi: onResponse")
+                            override fun onResponse(
+                                call: Call<TokenResponse>,
+                                response: Response<TokenResponse>
+                            ) {
+                                println("getTokenFromApi: onResponse")
 
-                    if (response.body()?.status.equals("success")) {
-                        println("getTokenFromApi: onResponse -> success")
+                                if (response.body()?.status.equals("success")) {
+                                    println("getTokenFromApi: onResponse -> success")
 
-                        saveAccessTokenFromPreferences(response.body()?.access_token ?: "")
-                        flagToken.postValue(false)
-                    } else {
+                                    saveAccessTokenFromPreferences(
+                                        response.body()?.access_token ?: ""
+                                    )
+                                    continuation.resume(Unit)
+                                } else {
+                                    continuation.resume(Unit)
 //                        errorEvent.post
-                    }
-                }
+                                }
+                            }
 
-                override fun onFailure(call: Call<TokenResponse>, t: Throwable) {
+                            override fun onFailure(call: Call<TokenResponse>, t: Throwable) {
+                                continuation.resume(Unit)
 //                    t.printStackTrace()
-                    flagToken.postValue(false)
-                    errorEvent.postValue("connect ERROR")
+//                    errorEvent.postValue("connect ERROR")
+                            }
+                        })
                 }
-            })
+            }
+        }
     }
 
-    fun checkToken(accessToken: String, flagToken: MutableLiveData<Boolean>,errorEvent: MainActivityViewModel.SingleLiveEvent<String>){
-        retrofitService.checkToken(accessToken)
-            .enqueue(object : Callback<TokenPlaceboResponse> {
+    suspend fun checkToken(scope: CoroutineScope, accessToken: String): String {
+        return suspendCoroutine { continuation ->
+            scope.launch {
+                launch {
+                    retrofitService.checkToken(accessToken)
+                        .enqueue(object : Callback<TokenPlaceboResponse> {
 
-                override fun onResponse(
-                    call: Call<TokenPlaceboResponse>,
-                    response: Response<TokenPlaceboResponse>
-                ) {
-                    println("checkToken: onResponse")
+                            override fun onResponse(
+                                call: Call<TokenPlaceboResponse>,
+                                response: Response<TokenPlaceboResponse>
+                            ) {
+                                println("checkToken: onResponse")
 
-                    if (response.body()?.status.equals("success")) {
-                        println("checkToken: onResponse  -> success")
+                                if (response.body()?.status.equals("success")) {
+                                    println("checkToken: onResponse  -> success")
+                                    println("response.body()?.status : ${response.body()?.status}")
 
-                        println("response.body()?.status : ${response.body()?.status}")
-                        flagToken.postValue(false)
-                    } else {
-                        println("checkToken: onResponse  -> error")
-                        println("checkToken: onResponse  -> getTokenFromApi")
+                                    continuation.resume("success")
 
-                        getTokenFromApi(flagToken, errorEvent)
-                    }
-                }
+                                } else {
+                                    println("checkToken: onResponse  -> error")
 
-                override fun onFailure(call: Call<TokenPlaceboResponse>, t: Throwable) {
+                                    continuation.resume("error")
+
+                                }
+                            }
+
+                            override fun onFailure(call: Call<TokenPlaceboResponse>, t: Throwable) {
 //                    t.printStackTrace()
-                    errorEvent.postValue("connect ERROR")
+                                println("checkToken: onFailure")
 
-                }
-            })
+                                continuation.resume("Throwable error")
+                            }
+                        })
+
+                }.join()
+                println("checkToken: Главный job этой функции")
+            }
+        }
     }
 
     //Метод для сохранения настроек
@@ -135,9 +184,9 @@ class Interactor(
         preferences.saveToken(accessToken)
     }
 
-    fun getDeviantPicturesFromDB(): LiveData<List<DeviantPicture>> = repo.getAllFromDB()
+    fun getDeviantPicturesFromDB(): Flow<List<DeviantPicture>> = repo.getAllFromDB()
 
-    fun getDeviantPicturesFromDBWithCategory(): LiveData<List<DeviantPicture>> {
+    fun getDeviantPicturesFromDBWithCategory(): Flow<List<DeviantPicture>> {
         println("getDeviantPicturesFromDBWithCategory -> ${preferences.getDefaultCategory()}")
         return repo.getCategoryFromDB(preferences.getDefaultCategory())
     }

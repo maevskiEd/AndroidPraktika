@@ -21,15 +21,6 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/avatars" />
 
-        <ed.maevski.androidpraktika.view.customviews.DonutView
-            android:id="@+id/donut_view"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:translationZ="11dp"
-            app:stroke="10"
-            app:progress="517000"
-            app:layout_constraintStart_toStartOf="@+id/poster"
-            app:layout_constraintBottom_toBottomOf="@+id/poster"/>
 
         <TextView
             android:id="@+id/title"

@@ -8,13 +8,16 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import ed.maevski.androidpraktika.App
 import ed.maevski.androidpraktika.domain.Interactor
+import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 class MainActivityViewModel : ViewModel() {
-    val flagToken: MutableLiveData<Boolean> = MutableLiveData()
-
-    var errorEvent = SingleLiveEvent<String>()
+    var flagToken = Channel<Boolean>(Channel.CONFLATED)
+    var errorEvent = Channel<Boolean>(Channel.CONFLATED)
 
     private var access_token: String
 
@@ -27,51 +30,40 @@ class MainActivityViewModel : ViewModel() {
 
         App.instance.dagger.inject(this)
         access_token = interactor.getAccessTokenFromPreferences()
-        flagToken.postValue(true)
 
-        initToken()
-    }
-
-    fun initToken() {
-        if (access_token.isEmpty()) {
-            println("initToken: then")
-            interactor.getTokenFromApi(flagToken, errorEvent)
-        } else {
-            println("initToken: else")
-            interactor.checkToken(access_token, flagToken, errorEvent)
+        MainScope().launch {
+            errorEvent.send(false)
+            initToken(this)
         }
     }
 
-    class SingleLiveEvent<T> : MutableLiveData<T>() {
-        private val mPending = AtomicBoolean(false)
-        @MainThread
-        override fun observe(owner: LifecycleOwner, observer: Observer<in T>) {
-            if (hasActiveObservers()) {
-                Log.w(TAG, "Multiple observers registered but only one will be notified of changes.")
-            }
-            // Observe the internal MutableLiveData
-            super.observe(owner, object : Observer<T> {
-                override fun onChanged(t: T?) {
-                    if (mPending.compareAndSet(true, false)) {
-                        observer.onChanged(t)
-                    }
+    fun initToken(scope: CoroutineScope) {
+        scope.launch {
+            flagToken.send(true)
+            if (access_token.isEmpty()) {
+                launch {
+                    println("initToken: then")
+                    interactor.getTokenFromApi(this)
+                    println("initToken: MainScope: flagToken - false")
+                    flagToken.send(false)
                 }
-            })
-        }
-        @MainThread
-        override fun setValue(t: T?) {
-            mPending.set(true)
-            super.setValue(t)
-        }
-        /**
-         * Used for cases where T is Void, to make calls cleaner.
-         */
-        @MainThread
-        fun call() {
-            setValue(null)
-        }
-        companion object {
-            private val TAG = "SingleLiveEvent"
+            } else {
+                val def = async {
+                    println("initToken: else")
+                    val s = interactor.checkToken(this, access_token)
+                    println("initToken: else, after checkToken")
+                    s
+                }
+                val result = def.await()
+                if (result == "error") {
+                    launch {
+                        println("initToken: else then")
+                        interactor.getTokenFromApi(this)
+                        println("initToken: MainScope: flagToken - false")
+                        flagToken.send(false)
+                    }
+                } else flagToken.send(false)
+            }
         }
     }
 }

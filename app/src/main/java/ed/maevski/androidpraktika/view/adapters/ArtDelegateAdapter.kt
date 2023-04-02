@@ -6,17 +6,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.hannesdorfmann.adapterdelegates4.AbsListItemAdapterDelegate
 import ed.maevski.androidpraktika.data.entity.DeviantPicture
+import ed.maevski.androidpraktika.databinding.ItemArtBinding
 import ed.maevski.androidpraktika.domain.Item
-import ed.maevski.androidpraktika.databinding.ItemPictureBinding
-import ed.maevski.androidpraktika.view.rv_adapters.PictureRecyclerAdapter
+import ed.maevski.androidpraktika.view.rv_adapters.ArtRecyclerAdapter
 
-class PictureDelegateAdapter(private val clickListener: PictureRecyclerAdapter.OnItemClickListener) :
-    AbsListItemAdapterDelegate<DeviantPicture, Item, PictureDelegateAdapter.ViewHolder>() {
-    class ViewHolder(binding: ItemPictureBinding) : RecyclerView.ViewHolder(binding.root) {
-        val picture = binding.poster
-        val title = binding.title
-        val author = binding.author
-        val description = binding.description
+class ArtDelegateAdapter (private val clickListener: ArtRecyclerAdapter.OnItemClickListener) :
+    AbsListItemAdapterDelegate<DeviantPicture, Item, ArtDelegateAdapter.ViewHolder>() {
+    class ViewHolder(binding: ItemArtBinding) : RecyclerView.ViewHolder(binding.root) {
+        val art = binding.art
         val item_container = binding.itemContainer
     }
 
@@ -25,7 +22,7 @@ class PictureDelegateAdapter(private val clickListener: PictureRecyclerAdapter.O
     }
 
     override fun onCreateViewHolder(parent: ViewGroup): ViewHolder {
-        return ViewHolder(ItemPictureBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return ViewHolder(ItemArtBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(item: DeviantPicture, holder: ViewHolder, payloads: MutableList<Any>) {
@@ -38,11 +35,7 @@ class PictureDelegateAdapter(private val clickListener: PictureRecyclerAdapter.O
             //Центруем изображение
             .centerCrop()
             //Указываем ImageView, куда будем загружать изображение
-            .into(holder.picture)
-
-        holder.title.text = item.title
-        holder.author.text = item.author
-        holder.description.text = item.description
+            .into(holder.art)
 
         holder.item_container.setOnClickListener{
             clickListener.click(item)

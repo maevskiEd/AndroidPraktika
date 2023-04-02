@@ -10,6 +10,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import ed.maevski.androidpraktika.view.MainActivity
 import ed.maevski.androidpraktika.view.rv_adapters.PictureRecyclerAdapter
@@ -18,14 +19,17 @@ import ed.maevski.androidpraktika.domain.Item
 import ed.maevski.androidpraktika.databinding.FragmentHomeBinding
 import ed.maevski.androidpraktika.view.decoration.TopSpacingItemDecoration
 import ed.maevski.androidpraktika.utils.AnimationHelper
+import ed.maevski.androidpraktika.view.rv_adapters.ArtRecyclerAdapter
 import ed.maevski.androidpraktika.viewmodel.HomeFragmentViewModel
+import kotlinx.coroutines.*
 import java.util.*
 
 class HomeFragment() : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var adapter: PictureRecyclerAdapter
+    private lateinit var adapter: ArtRecyclerAdapter
+    private lateinit var scopeHomeFragment: CoroutineScope
 
     private val homeFragmentViewModel: HomeFragmentViewModel by viewModels()
 
@@ -58,9 +62,17 @@ class HomeFragment() : Fragment() {
         println("HomeFragment: onViewCreated")
 
         homeFragmentViewModel.getDeviantArts()
-        homeFragmentViewModel.picturesListLiveData = homeFragmentViewModel.interactor.getDeviantPicturesFromDBWithCategory()
+        homeFragmentViewModel.picturesListData =
+            homeFragmentViewModel.interactor.getDeviantPicturesFromDBWithCategory()
 
-        adapter = PictureRecyclerAdapter(object : PictureRecyclerAdapter.OnItemClickListener {
+/*        adapter = PictureRecyclerAdapter(object : PictureRecyclerAdapter.OnItemClickListener {
+            override fun click(picture: DeviantPicture) {
+                Toast.makeText(requireContext(), picture.title, Toast.LENGTH_SHORT).show()
+                (requireActivity() as MainActivity).launchDetailsFragment(picture)
+            }
+        })*/
+
+        adapter = ArtRecyclerAdapter(object : ArtRecyclerAdapter.OnItemClickListener {
             override fun click(picture: DeviantPicture) {
                 Toast.makeText(requireContext(), picture.title, Toast.LENGTH_SHORT).show()
                 (requireActivity() as MainActivity).launchDetailsFragment(picture)
@@ -68,7 +80,8 @@ class HomeFragment() : Fragment() {
         })
 
         adapter.items = picturesDataBase
-        binding.mainRecycler.layoutManager = LinearLayoutManager(requireContext())
+//        binding.mainRecycler.layoutManager = LinearLayoutManager(requireContext())
+        binding.mainRecycler.layoutManager = GridLayoutManager(requireContext(), 3)
         val decorator = TopSpacingItemDecoration(8)
         binding.mainRecycler.addItemDecoration(decorator)
         binding.mainRecycler.adapter = adapter
@@ -120,13 +133,20 @@ class HomeFragment() : Fragment() {
             }
         })
 
-        homeFragmentViewModel.picturesListLiveData.observe(viewLifecycleOwner) {
-            println("homeFragmentViewModel.picturesListLiveData.observe -> $it")
-            picturesDataBase = it
+        scopeHomeFragment = CoroutineScope(Dispatchers.IO).also { scope ->
+            scope.launch {
+                homeFragmentViewModel.picturesListData.collect {
+                    withContext(Dispatchers.Main) {
+//                        filmsAdapter.addItems(it)
+                        picturesDataBase = it
+                    }
+                }
+            }
         }
 
-/*        homeFragmentViewModel.showProgressBar.observe(viewLifecycleOwner) {
-            binding.progressBar.isVisible = it
+/*        homeFragmentViewModel.picturesListLiveData.observe(viewLifecycleOwner) {
+            println("homeFragmentViewModel.picturesListLiveData.observe -> $it")
+            picturesDataBase = it
         }*/
 
         initPullToRefresh()
@@ -143,6 +163,11 @@ class HomeFragment() : Fragment() {
             //Убираем крутящееся колечко
             binding.pullToRefresh.isRefreshing = false
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        scopeHomeFragment.cancel()
     }
 
     override fun onDestroyView() {

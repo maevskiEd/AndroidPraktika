@@ -11,7 +11,7 @@
     <!--    Disclaimer-->
     <dimen name="textSizeDisclaimer">16sp</dimen>
     <!--    RecyclerView-->
-    <dimen name="marginsRV">16dp</dimen>
+    <dimen name="marginsRV">4dp</dimen>
     <!--    AppBar_Details-->
     <dimen name="heightAppBar">200dp</dimen>
     <!--    CollapsingToolbar-->
@@ -35,8 +35,10 @@
     <dimen name="radiusLayoutItemPicture">10dp</dimen>
     <dimen name="widthImageItemPicture">150dp</dimen>
     <dimen name="paddingsTextItemPicture">8dp</dimen>
-    <!--    SplashScreen-->
-    <dimen name="textSizeSplashScreen">32sp</dimen>
-    <dimen name="marginsSplashScreen">32dp</dimen>
+    <!--    itemArt-->
+    <dimen name="heightLayoutItemArt">125dp</dimen>
+    <dimen name="widthLayoutItemArt">125dp</dimen>
+    <dimen name="elevationLayoutItemArt">5dp</dimen>
+    <dimen name="radiusLayoutItemArt">4dp</dimen>
 
 </resources>

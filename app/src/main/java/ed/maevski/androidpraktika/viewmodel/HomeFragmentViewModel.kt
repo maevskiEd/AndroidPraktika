@@ -4,12 +4,12 @@ import androidx.lifecycle.ViewModel
 import ed.maevski.androidpraktika.App
 import ed.maevski.androidpraktika.data.entity.DeviantPicture
 import ed.maevski.androidpraktika.domain.Interactor
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Observable
 import javax.inject.Inject
 
 class HomeFragmentViewModel : ViewModel() {
 
-    lateinit var picturesListData: Flow<List<DeviantPicture>>
+    lateinit var picturesListData: Observable<List<DeviantPicture>>
 
     //Инициализируем интерактор
     @Inject

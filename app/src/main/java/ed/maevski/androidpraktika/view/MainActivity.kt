@@ -1,69 +1,52 @@
 package ed.maevski.androidpraktika.view
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import ed.maevski.androidpraktika.R
 import ed.maevski.androidpraktika.data.entity.DeviantPicture
 import ed.maevski.androidpraktika.databinding.ActivityMainBinding
+import ed.maevski.androidpraktika.utils.AutoDisposable
+import ed.maevski.androidpraktika.utils.addTo
 import ed.maevski.androidpraktika.view.fragments.*
 import ed.maevski.androidpraktika.viewmodel.MainActivityViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var scopeMainActivity: CoroutineScope
-
-
     val mainActivityViewModel: MainActivityViewModel by viewModels()
 
+    private val autoDisposable = AutoDisposable()
+
+    @SuppressLint("CheckResult")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        autoDisposable.bindTo(lifecycle)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        scopeMainActivity = CoroutineScope(Dispatchers.IO).also { scope ->
-            scope.launch {
-                for (element in mainActivityViewModel.flagToken) {
-                    println("MainActivity ->scopeMainActivity: flagToken: $element")
-                    withContext(Dispatchers.Main) {
-                        binding.mainProgressBar.isVisible = element
+        mainActivityViewModel.flagToken
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                binding.mainProgressBar.isVisible = it
+                if(!it){
+                    supportFragmentManager
+                        .beginTransaction()
+                        .add(R.id.fragment_placeholder, HomeFragment())
+                        .addToBackStack(null)
+                        .commit()
 
-                        if (!element) {
-                            supportFragmentManager
-                                .beginTransaction()
-                                .add(R.id.fragment_placeholder, HomeFragment())
-                                .addToBackStack(null)
-                                .commit()
-
-                            initMenu()
-                        }
-                    }
+                    initMenu()
                 }
-            }
-/*            scope.launch {
-                for (element in mainActivityViewModel.errorEvent) {
-                    println("MainActivity ->scopeMainActivity: errorEvent: $element")
-                    withContext(Dispatchers.Main) {
-                        if (!element) {
-                            Toast.makeText(applicationContext, "Error", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-            }*/
-        }
-
-/*        mainActivityViewModel.errorEvent.observe(this) {
-            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
-        }*/
+            }.addTo(autoDisposable)
     }
 
     //Ищем фрагмент по тегу, если он есть то возвращаем его, если нет, то null

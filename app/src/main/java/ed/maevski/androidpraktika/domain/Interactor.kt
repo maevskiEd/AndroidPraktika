@@ -5,15 +5,15 @@ import ed.maevski.androidpraktika.data.entity.DeviantPicture
 import ed.maevski.androidpraktika.data.entity.DeviantartResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenPlaceboResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenResponse
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
+import io.reactivex.rxjava3.core.Completable
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.core.Observable.fromIterable
+import io.reactivex.rxjava3.schedulers.Schedulers
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
+
 
 class Interactor(
     private val repo: MainRepository,
@@ -21,12 +21,12 @@ class Interactor(
     var token: Token,
     private val preferences: PreferenceProvider
 ) {
-    val scope: CoroutineScope = CoroutineScope(Dispatchers.IO)
 
     //и страницу, которую нужно загрузить (это для пагинации)
     fun getDeviantArtsFromApi(page: Int) {
         val accessToken = preferences.getToken()
-        var list: List<DeviantPicture>? = null
+//        var list: List<DeviantPicture>? = null
+        lateinit var list: List<DeviantPicture>
 
         println("getDeviantArtsFromApi")
         retrofitService.getPictures(getDefaultCategoryFromPreferences(), accessToken, 0, 20)
@@ -38,50 +38,31 @@ class Interactor(
                 ) {
                     println("getDeviantArtsFromApi: onResponse")
 
-                    scope.launch {
-                        launch {
-                            println("getDeviantArtsFromApi: onResponse: map: Begin")
-
-                            response.body()?.let { response ->
-                                list =
-                                    listOf(response.results).asFlow()?.flatMapConcat { it.asFlow() }
-                                        ?.filter{it.category == "Visual Art"}
-                                        ?.map { it ->
-                                                DeviantPicture(
-                                                    id = it.deviationid,
-                                                    title = it.title,
-                                                    author = it.author.username,
-                                                    picture = 0,
-                                                    description = "",
-                                                    url = it.preview.src,
-                                                    urlThumb150 = it.thumbs[0].src,
-                                                    countFavorites = it.stats.favourites,
-                                                    comments = it.stats.comments,
-                                                    countViews = 100000,
-                                                    isInFavorites = false,
-                                                    setting = preferences.getDefaultCategory()
-                                                )
-                                        }?.toList()
-                            }
-                            println("getDeviantArtsFromApi: onResponse: map: End")
-                        }.join()
-
-                        launch {
-                            println("call: $call")
-                            println("response: $response")
-                            println("response.isSuccessful: ${response.isSuccessful}")
-                            println("response.body: ${response.body()}")
-                            println("response.code: ${response.code()}")
-                            println("response.headers: ${response.headers()}")
-                            println("response.errorBody: ${response.errorBody()}")
-                            println("response.message: ${response.message()}")
-                            println("response.raw: ${response.raw()}")
-                            println(response.body()?.results)
-                            println("list: $list ")
-
-                            list?.let { repo.putToDb(it) }
-                        }
+                    response.body()?.let { response ->
+                        list = fromIterable(listOf(response.results)).flatMap { it ->
+                            fromIterable(it)
+                        }.map { it ->
+                            DeviantPicture(
+                                id = it.deviationid,
+                                title = it.title,
+                                author = it.author.username,
+                                picture = 0,
+                                description = "",
+                                url = it.preview.src,
+                                urlThumb150 = it.thumbs[0].src,
+                                countFavorites = it.stats.favourites,
+                                comments = it.stats.comments,
+                                countViews = 100000,
+                                isInFavorites = false,
+                                setting = preferences.getDefaultCategory()
+                            )
+                        }.toList().blockingGet()
                     }
+                    Completable.fromSingle<List<DeviantPicture>> {
+                        repo.putToDb(list)
+                    }
+                        .subscribeOn(Schedulers.io())
+                        .subscribe()
                 }
 
                 override fun onFailure(call: Call<DeviantartResponse>, t: Throwable) {
@@ -92,82 +73,86 @@ class Interactor(
             })
     }
 
-    suspend fun getTokenFromApi(scope: CoroutineScope) {
-        return suspendCoroutine { continuation ->
-            scope.launch {
-                launch {
-                    retrofitService.getToken("client_credentials", API.CLIENT_ID, API.CLIENT_SECRET)
-                        .enqueue(object : Callback<TokenResponse> {
+    fun getTokenFromApi(subject: BehaviorSubject<String>) {
+        retrofitService.getToken("client_credentials", API.CLIENT_ID, API.CLIENT_SECRET)
+            .enqueue(object : Callback<TokenResponse> {
 
-                            override fun onResponse(
-                                call: Call<TokenResponse>,
-                                response: Response<TokenResponse>
-                            ) {
-                                println("getTokenFromApi: onResponse")
+                override fun onResponse(
+                    call: Call<TokenResponse>,
+                    response: Response<TokenResponse>
+                ) {
+                    println("getTokenFromApi: onResponse")
 
-                                if (response.body()?.status.equals("success")) {
-                                    println("getTokenFromApi: onResponse -> success")
+                    if (response.body()?.status.equals("success")) {
+                        println("getTokenFromApi: onResponse -> success")
 
-                                    saveAccessTokenFromPreferences(
-                                        response.body()?.access_token ?: ""
-                                    )
-                                    continuation.resume(Unit)
-                                } else {
-                                    continuation.resume(Unit)
+                        saveAccessTokenFromPreferences(
+                            response.body()?.access_token ?: ""
+                        )
+                        subject.onNext("success")
+                        subject.onComplete()
+                    } else {
+                        subject.onNext("error")
+                        subject.onComplete()
+
 //                        errorEvent.post
-                                }
-                            }
+                    }
+                }
 
-                            override fun onFailure(call: Call<TokenResponse>, t: Throwable) {
-                                continuation.resume(Unit)
+                override fun onFailure(call: Call<TokenResponse>, t: Throwable) {
+                    subject.onNext("connect ERROR")
+                    subject.onComplete()
+
 //                    t.printStackTrace()
 //                    errorEvent.postValue("connect ERROR")
-                            }
-                        })
                 }
-            }
-        }
+            })
     }
 
-    suspend fun checkToken(scope: CoroutineScope, accessToken: String): String {
-        return suspendCoroutine { continuation ->
+    fun checkToken(subject: BehaviorSubject<String>, accessToken: String){
+        retrofitService.checkToken(accessToken)
+            .enqueue(object : Callback<TokenPlaceboResponse> {
+
+                override fun onResponse(
+                    call: Call<TokenPlaceboResponse>,
+                    response: Response<TokenPlaceboResponse>
+                ) {
+                    println("checkToken: onResponse")
+
+                    if (response.body()?.status.equals("success")) {
+                        println("checkToken: onResponse  -> success")
+                        println("response.body()?.status : ${response.body()?.status}")
+
+                        subject.onNext("success")
+                        subject.onComplete()
+
+                    } else {
+                        println("checkToken: onResponse  -> error")
+
+                        subject.onNext("error")
+                        subject.onComplete()
+
+                    }
+                }
+
+                override fun onFailure(call: Call<TokenPlaceboResponse>, t: Throwable) {
+//                    t.printStackTrace()
+                    println("checkToken: onFailure")
+
+                    subject.onNext("connect ERROR")
+                    subject.onComplete()
+                }
+            })
+
+/*        return suspendCoroutine { continuation ->
             scope.launch {
                 launch {
-                    retrofitService.checkToken(accessToken)
-                        .enqueue(object : Callback<TokenPlaceboResponse> {
 
-                            override fun onResponse(
-                                call: Call<TokenPlaceboResponse>,
-                                response: Response<TokenPlaceboResponse>
-                            ) {
-                                println("checkToken: onResponse")
-
-                                if (response.body()?.status.equals("success")) {
-                                    println("checkToken: onResponse  -> success")
-                                    println("response.body()?.status : ${response.body()?.status}")
-
-                                    continuation.resume("success")
-
-                                } else {
-                                    println("checkToken: onResponse  -> error")
-
-                                    continuation.resume("error")
-
-                                }
-                            }
-
-                            override fun onFailure(call: Call<TokenPlaceboResponse>, t: Throwable) {
-//                    t.printStackTrace()
-                                println("checkToken: onFailure")
-
-                                continuation.resume("Throwable error")
-                            }
-                        })
 
                 }.join()
                 println("checkToken: Главный job этой функции")
             }
-        }
+        }*/
     }
 
     //Метод для сохранения настроек
@@ -184,9 +169,9 @@ class Interactor(
         preferences.saveToken(accessToken)
     }
 
-    fun getDeviantPicturesFromDB(): Flow<List<DeviantPicture>> = repo.getAllFromDB()
+    fun getDeviantPicturesFromDB(): Observable<List<DeviantPicture>> = repo.getAllFromDB()
 
-    fun getDeviantPicturesFromDBWithCategory(): Flow<List<DeviantPicture>> {
+    fun getDeviantPicturesFromDBWithCategory(): Observable<List<DeviantPicture>> {
         println("getDeviantPicturesFromDBWithCategory -> ${preferences.getDefaultCategory()}")
         return repo.getCategoryFromDB(preferences.getDefaultCategory())
     }

@@ -39,7 +39,7 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.core:core-ktx:1.10.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.8.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
@@ -78,13 +78,16 @@ dependencies {
     implementation "androidx.room:room-runtime:2.5.1"
     implementation "androidx.room:room-ktx:2.5.1"
     kapt "androidx.room:room-compiler:2.5.1"
+
     //Room-rxjava
-    def room_version = "2.3.0-beta02"
     implementation "androidx.room:room-rxjava3:2.6.0-alpha01"
 
     //RxJava
     implementation 'io.reactivex.rxjava3:rxandroid:3.0.0'
     implementation 'io.reactivex.rxjava3:rxjava:3.0.10'
+
+    //retrofit-rxjava
+    implementation "com.github.akarnokd:rxjava3-retrofit-adapter:3.0.0"
 
     //ViewModel
     implementation "androidx.fragment:fragment-ktx:1.5.6"

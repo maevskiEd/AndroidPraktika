@@ -3,12 +3,19 @@ package ed.maevski.androidpraktika.data
 import ed.maevski.androidpraktika.data.entity.DeviantartResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenPlaceboResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenResponse
+import io.reactivex.rxjava3.core.Observable
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface DeviantartApi {
+
+    @GET("api/v1/oauth2/browse/tags/search")
+    fun getTagSearch(
+        @Query("access_token") tokenKey: String,
+        @Query("tag_name") tagName: String
+    ): Observable<DeviantartResponse>
 
     @GET("api/v1/oauth2/browse/{category}")
     fun getPictures(

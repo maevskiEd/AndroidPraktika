@@ -3,8 +3,8 @@ package ed.maevski.androidpraktika.di.modules
 import dagger.Module
 import dagger.Provides
 import ed.maevski.androidpraktika.BuildConfig
-import ed.maevski.androidpraktika.data.ApiConstants
 import ed.maevski.androidpraktika.data.DeviantartApi
+import hu.akarnokd.rxjava3.retrofit.RxJava3CallAdapterFactory
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -36,6 +36,8 @@ class RemoteModule {
         .baseUrl(DeviantartApi.ApiConst.BASE_URL)
         //Добавляем конвертер
         .addConverterFactory(GsonConverterFactory.create())
+        //Добавляем поддержку RxJava
+        .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
         //Добавляем кастомный клиент
         .client(okHttpClient)
         .build()

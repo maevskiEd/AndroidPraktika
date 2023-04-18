@@ -1,10 +1,12 @@
 package ed.maevski.androidpraktika.domain
 
+import android.annotation.SuppressLint
 import ed.maevski.androidpraktika.data.*
 import ed.maevski.androidpraktika.data.entity.DeviantPicture
 import ed.maevski.androidpraktika.data.entity.DeviantartResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenPlaceboResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenResponse
+import ed.maevski.androidpraktika.utils.Converter
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observable.fromIterable
@@ -25,8 +27,7 @@ class Interactor(
     //и страницу, которую нужно загрузить (это для пагинации)
     fun getDeviantArtsFromApi(page: Int) {
         val accessToken = preferences.getToken()
-//        var list: List<DeviantPicture>? = null
-        lateinit var list: List<DeviantPicture>
+        var list: List<DeviantPicture> = emptyList()
 
         println("getDeviantArtsFromApi")
         retrofitService.getPictures(getDefaultCategoryFromPreferences(), accessToken, 0, 20)
@@ -109,7 +110,7 @@ class Interactor(
             })
     }
 
-    fun checkToken(subject: BehaviorSubject<String>, accessToken: String){
+    fun checkToken(subject: BehaviorSubject<String>, accessToken: String) {
         retrofitService.checkToken(accessToken)
             .enqueue(object : Callback<TokenPlaceboResponse> {
 
@@ -174,5 +175,56 @@ class Interactor(
     fun getDeviantPicturesFromDBWithCategory(): Observable<List<DeviantPicture>> {
         println("getDeviantPicturesFromDBWithCategory -> ${preferences.getDefaultCategory()}")
         return repo.getCategoryFromDB(preferences.getDefaultCategory())
+    }
+
+    @SuppressLint("CheckResult")
+//    fun getTagSearchResultFromApi(search: String): Observable<List<DeviantPicture>> {
+    fun getTagSearchResultFromApi(search: String) {
+        val accessToken = preferences.getToken()
+        val ll = retrofitService.getTagSearch(accessToken, search)
+        println("getTagSearchResultFromApi -> ll $ll")
+/*        val xx = ll.flatMap{it}.map {
+//            fromIterable(it.results)
+            DeviantPicture(
+                id = it.deviationid,
+                title = it.title,
+                author = it.author.username,
+                picture = 0,
+                description = "",
+                url = it.preview.src,
+                urlThumb150 = it.thumbs[0].src,
+                countFavorites = it.stats.favourites,
+                comments = it.stats.comments,
+                countViews = 100000,
+                isInFavorites = false,
+                setting = preferences.getDefaultCategory()
+            )
+        }*/
+
+/*            .map { it ->
+                DeviantPicture(
+                    id = it.deviationid,
+                    title = it.title,
+                    author = it.author.username,
+                    picture = 0,
+                    description = "",
+                    url = it.preview.src,
+                    urlThumb150 = it.thumbs[0].src,
+                    countFavorites = it.stats.favourites,
+                    comments = it.stats.comments,
+                    countViews = 100000,
+                    isInFavorites = false,
+                    setting = preferences.getDefaultCategory()
+                )
+            }*/
+
+/*        val ll = retrofitService.getTagSearch(accessToken, search).map { it ->
+            fromIterable(it)
+        }
+
+            .map {
+
+//                Converter.convertApiListToDTOList(it)
+            }*/
     }
 }

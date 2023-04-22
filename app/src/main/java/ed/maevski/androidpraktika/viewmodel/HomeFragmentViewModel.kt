@@ -23,9 +23,10 @@ class HomeFragmentViewModel : ViewModel() {
 //        getDeviantArts()
     }
 
-
     fun getDeviantArts() {
         println("getDeviantArts")
         interactor.getDeviantArtsFromApi(1)
     }
+
+    fun getTagSearch(search: String) = interactor.getTagSuggestionsFromApi(search)
 }

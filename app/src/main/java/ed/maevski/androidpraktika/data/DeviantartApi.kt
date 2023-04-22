@@ -12,7 +12,7 @@ import retrofit2.http.Query
 interface DeviantartApi {
 
     @GET("api/v1/oauth2/browse/tags/search")
-    fun getTagSearch(
+    fun getTagSuggestions(
         @Query("access_token") tokenKey: String,
         @Query("tag_name") tagName: String
     ): Observable<DeviantartResponse>

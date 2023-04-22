@@ -12,6 +12,7 @@ import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observable.fromIterable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
+import kotlinx.coroutines.flow.filter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -42,7 +43,8 @@ class Interactor(
                     response.body()?.let { response ->
                         list = fromIterable(listOf(response.results)).flatMap { it ->
                             fromIterable(it)
-                        }.map { it ->
+                        }.filter{it.category == "Visual Art"}
+                            .map { it ->
                             DeviantPicture(
                                 id = it.deviationid,
                                 title = it.title,
@@ -179,9 +181,9 @@ class Interactor(
 
     @SuppressLint("CheckResult")
 //    fun getTagSearchResultFromApi(search: String): Observable<List<DeviantPicture>> {
-    fun getTagSearchResultFromApi(search: String) {
+    fun getTagSuggestionsFromApi(search: String) {
         val accessToken = preferences.getToken()
-        val ll = retrofitService.getTagSearch(accessToken, search)
+        val ll = retrofitService.getTagSuggestions(accessToken, search)
         println("getTagSearchResultFromApi -> ll $ll")
 /*        val xx = ll.flatMap{it}.map {
 //            fromIterable(it.results)

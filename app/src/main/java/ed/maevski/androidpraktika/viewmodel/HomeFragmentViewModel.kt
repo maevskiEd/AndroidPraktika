@@ -24,9 +24,6 @@ class HomeFragmentViewModel : ViewModel() {
     init {
         println("HomeFragmentViewModel: Init")
         App.instance.dagger.inject(this)
-
-//        picturesListData = interactor.getDeviantPicturesFromDBWithCategory()
-//        getDeviantArts()
     }
 
     fun getDeviantArts() {

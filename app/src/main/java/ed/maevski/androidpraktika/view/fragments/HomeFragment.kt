@@ -12,18 +12,17 @@ import android.widget.AutoCompleteTextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.widget.SearchView
-import androidx.core.view.isVisible
-import androidx.cursoradapter.widget.CursorAdapter
 import androidx.cursoradapter.widget.SimpleCursorAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import ed.maevski.androidpraktika.data.entity.DeviantPicture
 import ed.maevski.androidpraktika.databinding.FragmentHomeBinding
 import ed.maevski.androidpraktika.domain.Item
 import ed.maevski.androidpraktika.utils.AnimationHelper
+import ed.maevski.androidpraktika.utils.AutoDisposable
+import ed.maevski.androidpraktika.utils.addTo
 import ed.maevski.androidpraktika.view.MainActivity
 import ed.maevski.androidpraktika.view.decoration.TopSpacingItemDecoration
 import ed.maevski.androidpraktika.view.rv_adapters.ArtRecyclerAdapter
@@ -31,7 +30,6 @@ import ed.maevski.androidpraktika.viewmodel.HomeFragmentViewModel
 
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
-import io.reactivex.rxjava3.core.ObservableOnSubscribe
 import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.*
@@ -43,6 +41,8 @@ class HomeFragment() : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adapter: ArtRecyclerAdapter
+
+    private val autoDisposable = AutoDisposable()
 
     private val homeFragmentViewModel: HomeFragmentViewModel by viewModels()
 
@@ -101,89 +101,8 @@ class HomeFragment() : Fragment() {
             }
 
         initSearchView()
-//        initSearchView2()
-
         initPullToRefresh()
         initRecyckler()
-    }
-
-    private fun initSearchView2() {
-        binding.searchView.setOnClickListener {
-            binding.searchView.isIconified = false
-        }
-
-        // Настраиваем автозаполнение
-        val suggestions = listOf("apple", "banana", "cherry", "date", "elderberry")
-        // Определяем имена столбцов таблицы
-        val FROM_COLUMNS = arrayOf("tag")
-
-        // Определяем массив с ID элементов View, в которые будут выводиться данные
-        val TO_IDS = intArrayOf(android.R.id.text1)
-
-        //        готовая разметка android.R.layout.simple_list_item_1, которая состоит из одного TextView
-        val cursorAdapter = SimpleCursorAdapter(
-            requireContext(),
-            R.layout.simple_list_item_1,
-            null,
-            FROM_COLUMNS,
-            TO_IDS,
-            0
-        )
-
-        binding.searchView.findViewById<AutoCompleteTextView>(androidx.appcompat.R.id.search_src_text).threshold =
-            MIN_THRESHOLD_SEARCH_TAG
-
-        binding.searchView.suggestionsAdapter = cursorAdapter
-
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                // Вызывается, когда пользователь отправляет запрос
-                // Обрабатываем запрос и выполняем поиск
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                // Вызывается, когда пользователь вводит текст в SearchView
-                // Обновляем автозаполнение
-
-                val cursor = MatrixCursor(arrayOf("_id", "tag"))
-                newText?.let {
-                    suggestions.forEachIndexed { index, suggestion ->
-                        if (suggestion.contains(newText, true))
-                            cursor.addRow(arrayOf(index, suggestion))
-                    }
-                }
-
-                cursorAdapter.changeCursor(cursor)
-/*                if (newText != null) {
-                    if (newText.length >= MIN_THRESHOLD_SEARCH_TAG) {
-                        println("onQueryTextChange -> $newText")
-                        homeFragmentViewModel.getTagSuggestions(newText)
-                    }
-                }*/
-                return true
-            }
-
-        })
-
-        binding.searchView.setOnSuggestionListener(object : SearchView.OnSuggestionListener {
-            override fun onSuggestionSelect(position: Int): Boolean {
-                return false
-            }
-
-            //            @SuppressLint("Range")
-            @SuppressLint("Range")
-            override fun onSuggestionClick(position: Int): Boolean {
-                val cursor = binding.searchView.suggestionsAdapter.getItem(position) as Cursor
-//                val selection = cursor.getString(cursor.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1))
-                val selection = cursor.getString(cursor.getColumnIndex("tag"))
-                binding.searchView.setQuery(selection, false)
-
-                // Do something with selection
-                return true
-            }
-
-        })
     }
 
     private fun initRecyckler() {
@@ -271,14 +190,6 @@ class HomeFragment() : Fragment() {
                     }
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-/*            .subscribe { it ->
-                it.results.forEach { ress ->
-                    println(ress.tagName)
-                }
-                println("it = ${it.results}")
-                cursorAdapter.changeCursor(cursor)
-                cursorAdapter.notifyDataSetChanged()
-            }*/
                     .subscribeBy(
                         onError = {
                             Toast.makeText(
@@ -297,8 +208,8 @@ class HomeFragment() : Fragment() {
                             cursorAdapter.notifyDataSetChanged()
                             cursor.close()
                         }
-                    )
-//            .addTo(autoDisposable)
+                    ).addTo(autoDisposable)
+
                 return true
             }
 
@@ -327,9 +238,6 @@ class HomeFragment() : Fragment() {
                     .flatMap {
                         homeFragmentViewModel.getTagBrowseResult(it)
                     }
-/*                    .flatMap { it ->
-                        Observable.fromIterable(it.results)
-                    }*/
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .map {

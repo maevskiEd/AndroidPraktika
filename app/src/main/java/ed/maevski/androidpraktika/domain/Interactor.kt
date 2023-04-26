@@ -3,26 +3,17 @@ package ed.maevski.androidpraktika.domain
 import android.annotation.SuppressLint
 import android.database.Cursor
 import android.database.MatrixCursor
-import android.widget.Toast
-import androidx.core.content.ContentProviderCompat.requireContext
 import ed.maevski.androidpraktika.data.*
 import ed.maevski.androidpraktika.data.entity.DeviantPicture
 import ed.maevski.androidpraktika.data.entity.DeviantartResponse
-import ed.maevski.androidpraktika.data.entity_tag.Results
 import ed.maevski.androidpraktika.data.entity_tag.TagSuggestionsResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenPlaceboResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenResponse
-import ed.maevski.androidpraktika.utils.Converter
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Observable.fromIterable
-import io.reactivex.rxjava3.core.ObservableOnSubscribe
-import io.reactivex.rxjava3.kotlin.addTo
 import io.reactivex.rxjava3.schedulers.Schedulers
 import io.reactivex.rxjava3.subjects.BehaviorSubject
-import io.reactivex.rxjava3.kotlin.subscribeBy
-import kotlinx.coroutines.flow.filter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -184,37 +175,7 @@ class Interactor(
 //        По этой переменной индексируем записи в создаваемом курсоре
         var i = 0
 
-//        Ищем на сайте Deviantart все tag подподающие под условие (минимальное количество символов = 3)
-//        Затем проходит по каждому элементу списка ответа и формируем курсор на основе MatrixCursor
-/*        Observable.create(ObservableOnSubscribe<String> { subscriber ->
-            println("Внутри Observable")
-            subscriber.onNext("map")
-
-        }).subscribeOn(Schedulers.io())
-            .map {
-                println("Inside map")
-                println("it: $it")
-                val xx = retrofitService.getTagSuggestions(accessToken, search)
-                println("xx: $xx")
-                xx
-            }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeBy(
-                onError = {
-                    println("Error")
-//                    Toast.makeText(requireContext(), "Что-то пошло не так", Toast.LENGTH_SHORT).show()
-                },
-                onNext = {
-                    println("On next")
-//                    filmsAdapter.addItems(it)
-                }
-            )*/
-//            .addTo(autoDisposable)
-
-
-
-        val yy = retrofitService.getTagSuggestions(accessToken, search).enqueue(object : Callback<TagSuggestionsResponse>{
+        retrofitService.getTagSuggestions(accessToken, search).enqueue(object : Callback<TagSuggestionsResponse>{
             override fun onResponse(
                 call: Call<TagSuggestionsResponse>,
                 response: Response<TagSuggestionsResponse>
@@ -229,19 +190,8 @@ class Interactor(
             }
         })
 
-//        println("getTagSuggestionsFromApi -> xx: $xx")
-/*       xx.map {
-           println(it.results)
-        }*/
-/*             xx.map {
-            it.forEach {
-                cursor.addRow(arrayOf(i++, it.tag_name))
-            }
-            cursor
-        }*/
         println("interacor -> getTagSuggestionsFromApi -> cursor: $cursor")
         subject.onNext(cursor)
-//        subject.onComplete()
     }
 
     @SuppressLint("CheckResult")

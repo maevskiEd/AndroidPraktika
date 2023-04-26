@@ -24,7 +24,6 @@ interface DeviantartApi {
     fun getFilmFromSearch(
         @Query("tag_name") tagName: String,
         @Query("access_token") tokenKey: String,
-//    ): Observable<List<Results>>
     ): Observable<TagSuggestionsResponse>
 
     @GET("api/v1/oauth2/browse/tags/search")
@@ -32,9 +31,6 @@ interface DeviantartApi {
         @Query("access_token") tokenKey: String,
         @Query("tag_name") tagName: String
             ): Call<TagSuggestionsResponse>
-
-//    ): Observable<TagSuggestionsResponse>
-
 
     @GET("api/v1/oauth2/browse/{category}")
     fun getPictures(

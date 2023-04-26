@@ -1,7 +1,6 @@
 package ed.maevski.androidpraktika.data
 
 import ed.maevski.androidpraktika.data.entity.DeviantartResponse
-import ed.maevski.androidpraktika.data.entity_tag.Results
 import ed.maevski.androidpraktika.data.entity_tag.TagSuggestionsResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenPlaceboResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenResponse

@@ -73,6 +73,8 @@ class HomeFragment() : Fragment() {
 
         super.onViewCreated(view, savedInstanceState)
 
+        autoDisposable.bindTo(lifecycle)
+
         println("HomeFragment: onViewCreated")
 
         homeFragmentViewModel.getDeviantArts()
@@ -181,7 +183,7 @@ class HomeFragment() : Fragment() {
                         homeFragmentViewModel.getSearchResult(it)
                     }
                     .map {
-                        println("2level^ Внутри Observable -> it: ${it.results}")
+                        println("2level^ Внутри Observable -> it: ${it}")
                         var index = 0
                         it.results.forEach { ress ->
                             cursor.addRow(arrayOf(index++, ress.tagName))
@@ -208,7 +210,8 @@ class HomeFragment() : Fragment() {
                             cursorAdapter.notifyDataSetChanged()
                             cursor.close()
                         }
-                    ).addTo(autoDisposable)
+                    )
+                    .addTo(autoDisposable)
 
                 return true
             }
@@ -266,7 +269,8 @@ class HomeFragment() : Fragment() {
                         adapter.items = it
                         binding.mainRecycler.adapter = adapter
                         (binding.mainRecycler.adapter as ArtRecyclerAdapter).notifyDataSetChanged()
-                    }
+                    }.addTo(autoDisposable)
+
                 return true
             }
 

@@ -1,15 +1,21 @@
 package ed.maevski.androidpraktika.viewmodel
 
+import android.database.Cursor
 import androidx.lifecycle.ViewModel
 import ed.maevski.androidpraktika.App
 import ed.maevski.androidpraktika.data.entity.DeviantPicture
 import ed.maevski.androidpraktika.domain.Interactor
 import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import javax.inject.Inject
 
 class HomeFragmentViewModel : ViewModel() {
 
     lateinit var picturesListData: Observable<List<DeviantPicture>>
+
+    lateinit var cursor: Observable<Cursor>
+
+    val tagSuggestionsSubject: BehaviorSubject<Cursor> = BehaviorSubject.create()
 
     //Инициализируем интерактор
     @Inject
@@ -28,5 +34,12 @@ class HomeFragmentViewModel : ViewModel() {
         interactor.getDeviantArtsFromApi(1)
     }
 
-    fun getTagSearch(search: String) = interactor.getTagSuggestionsFromApi(search)
+    fun getTagSuggestions(search: String) {
+        println("getTagSuggestions - > search: $search")
+        interactor.getTagSuggestionsFromApi(tagSuggestionsSubject, search)
+    }
+
+    fun getSearchResult(search: String) = interactor.getSearchResultFromApi(search)
+
+    fun getTagBrowseResult(search: String) = interactor.getTagBrowseFromApi(search)
 }

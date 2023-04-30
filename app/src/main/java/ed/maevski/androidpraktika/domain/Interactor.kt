@@ -1,8 +1,12 @@
 package ed.maevski.androidpraktika.domain
 
+import android.annotation.SuppressLint
+import android.database.Cursor
+import android.database.MatrixCursor
 import ed.maevski.androidpraktika.data.*
 import ed.maevski.androidpraktika.data.entity.DeviantPicture
 import ed.maevski.androidpraktika.data.entity.DeviantartResponse
+import ed.maevski.androidpraktika.data.entity_tag.TagSuggestionsResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenPlaceboResponse
 import ed.maevski.androidpraktika.data.entity_token.TokenResponse
 import io.reactivex.rxjava3.core.Completable
@@ -25,8 +29,7 @@ class Interactor(
     //и страницу, которую нужно загрузить (это для пагинации)
     fun getDeviantArtsFromApi(page: Int) {
         val accessToken = preferences.getToken()
-//        var list: List<DeviantPicture>? = null
-        lateinit var list: List<DeviantPicture>
+        var list: List<DeviantPicture> = emptyList()
 
         println("getDeviantArtsFromApi")
         retrofitService.getPictures(getDefaultCategoryFromPreferences(), accessToken, 0, 20)
@@ -41,22 +44,23 @@ class Interactor(
                     response.body()?.let { response ->
                         list = fromIterable(listOf(response.results)).flatMap { it ->
                             fromIterable(it)
-                        }.map { it ->
-                            DeviantPicture(
-                                id = it.deviationid,
-                                title = it.title,
-                                author = it.author.username,
-                                picture = 0,
-                                description = "",
-                                url = it.preview.src,
-                                urlThumb150 = it.thumbs[0].src,
-                                countFavorites = it.stats.favourites,
-                                comments = it.stats.comments,
-                                countViews = 100000,
-                                isInFavorites = false,
-                                setting = preferences.getDefaultCategory()
-                            )
-                        }.toList().blockingGet()
+                        }.filter { it.category == "Visual Art" }
+                            .map { it ->
+                                DeviantPicture(
+                                    id = it.deviationid,
+                                    title = it.title,
+                                    author = it.author.username,
+                                    picture = 0,
+                                    description = "",
+                                    url = it.preview.src,
+                                    urlThumb150 = it.thumbs[0].src,
+                                    countFavorites = it.stats.favourites,
+                                    comments = it.stats.comments,
+                                    countViews = 100000,
+                                    isInFavorites = false,
+                                    setting = preferences.getDefaultCategory()
+                                )
+                            }.toList().blockingGet()
                     }
                     Completable.fromSingle<List<DeviantPicture>> {
                         repo.putToDb(list)
@@ -94,22 +98,19 @@ class Interactor(
                     } else {
                         subject.onNext("error")
                         subject.onComplete()
-
-//                        errorEvent.post
                     }
                 }
 
                 override fun onFailure(call: Call<TokenResponse>, t: Throwable) {
                     subject.onNext("connect ERROR")
                     subject.onComplete()
-
 //                    t.printStackTrace()
 //                    errorEvent.postValue("connect ERROR")
                 }
             })
     }
 
-    fun checkToken(subject: BehaviorSubject<String>, accessToken: String){
+    fun checkToken(subject: BehaviorSubject<String>, accessToken: String) {
         retrofitService.checkToken(accessToken)
             .enqueue(object : Callback<TokenPlaceboResponse> {
 
@@ -143,16 +144,6 @@ class Interactor(
                     subject.onComplete()
                 }
             })
-
-/*        return suspendCoroutine { continuation ->
-            scope.launch {
-                launch {
-
-
-                }.join()
-                println("checkToken: Главный job этой функции")
-            }
-        }*/
     }
 
     //Метод для сохранения настроек
@@ -174,5 +165,17 @@ class Interactor(
     fun getDeviantPicturesFromDBWithCategory(): Observable<List<DeviantPicture>> {
         println("getDeviantPicturesFromDBWithCategory -> ${preferences.getDefaultCategory()}")
         return repo.getCategoryFromDB(preferences.getDefaultCategory())
+    }
+
+    @SuppressLint("CheckResult")
+    fun getTagSuggestionsFromApi(search: String) : Observable<TagSuggestionsResponse>{
+        val accessToken = preferences.getToken()
+        return retrofitService.getTagSuggestions(search, accessToken)
+    }
+
+
+    fun getTagBrowseFromApi(tag: String): Observable<DeviantartResponse> {
+        val accessToken = preferences.getToken()
+        return retrofitService.getTagsBrowse(tag, 21,accessToken)
     }
 }

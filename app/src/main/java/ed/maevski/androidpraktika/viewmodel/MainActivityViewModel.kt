@@ -9,9 +9,7 @@ import javax.inject.Inject
 
 
 class MainActivityViewModel : ViewModel() {
-    //    var flagToken = Channel<Boolean>(Channel.CONFLATED)
     var flagToken: BehaviorSubject<Boolean> = BehaviorSubject.create()
-//    var errorEvent = Channel<Boolean>(Channel.CONFLATED)
 
     private var access_token: String
 
@@ -24,12 +22,7 @@ class MainActivityViewModel : ViewModel() {
 
         App.instance.dagger.inject(this)
         access_token = interactor.getAccessTokenFromPreferences()
-
-//        MainScope().launch {
-//            errorEvent.send(false)
-
         initToken()
-//        }
     }
 
     @SuppressLint("CheckResult")

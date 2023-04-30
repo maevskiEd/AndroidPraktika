@@ -168,37 +168,11 @@ class Interactor(
     }
 
     @SuppressLint("CheckResult")
-    fun getTagSuggestionsFromApi(subject: BehaviorSubject<Cursor>, search: String) {
-//        Первый ключ в MatrixCursor всегда жестко называется _id
-        val cursor = MatrixCursor(arrayOf("_id", "tag"))
+    fun getTagSuggestionsFromApi(search: String) : Observable<TagSuggestionsResponse>{
         val accessToken = preferences.getToken()
-//        По этой переменной индексируем записи в создаваемом курсоре
-        var i = 0
-
-        retrofitService.getTagSuggestions(accessToken, search).enqueue(object : Callback<TagSuggestionsResponse>{
-            override fun onResponse(
-                call: Call<TagSuggestionsResponse>,
-                response: Response<TagSuggestionsResponse>
-            ) {
-                println("getTagSuggestionsFromApi: onResponse")
-                println(response.body())
-            }
-
-            override fun onFailure(call: Call<TagSuggestionsResponse>, t: Throwable) {
-                println("getTagSuggestionsFromApi: onFailure")
-                println(t)
-            }
-        })
-
-        println("interacor -> getTagSuggestionsFromApi -> cursor: $cursor")
-        subject.onNext(cursor)
+        return retrofitService.getTagSuggestions(search, accessToken)
     }
 
-    @SuppressLint("CheckResult")
-    fun getSearchResultFromApi(search: String): Observable<TagSuggestionsResponse> {
-        val accessToken = preferences.getToken()
-        return retrofitService.getFilmFromSearch(search, accessToken)
-    }
 
     fun getTagBrowseFromApi(tag: String): Observable<DeviantartResponse> {
         val accessToken = preferences.getToken()

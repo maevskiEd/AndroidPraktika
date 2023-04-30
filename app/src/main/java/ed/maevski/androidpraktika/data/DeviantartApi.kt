@@ -20,16 +20,10 @@ interface DeviantartApi {
     ): Observable<DeviantartResponse>
 
     @GET("api/v1/oauth2/browse/tags/search")
-    fun getFilmFromSearch(
+    fun getTagSuggestions(
         @Query("tag_name") tagName: String,
         @Query("access_token") tokenKey: String,
     ): Observable<TagSuggestionsResponse>
-
-    @GET("api/v1/oauth2/browse/tags/search")
-    fun getTagSuggestions(
-        @Query("access_token") tokenKey: String,
-        @Query("tag_name") tagName: String
-            ): Call<TagSuggestionsResponse>
 
     @GET("api/v1/oauth2/browse/{category}")
     fun getPictures(

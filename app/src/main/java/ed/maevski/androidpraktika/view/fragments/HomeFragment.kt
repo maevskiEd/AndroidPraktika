@@ -180,7 +180,7 @@ class HomeFragment() : Fragment() {
                         it.isNotBlank()
                     }
                     .flatMap {
-                        homeFragmentViewModel.getSearchResult(it)
+                        homeFragmentViewModel.getTagSuggestions(it)
                     }
                     .map {
                         println("2level^ Внутри Observable -> it: ${it}")
